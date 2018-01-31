@@ -1,0 +1,222 @@
+{
+    "places": {
+        "ChIJ-bYegINw44kRjnGwCC7k2Zc": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRZAAAAvqCFo6j8uQB8aly7ThtzJQSmI046n46Jstk_HnHMwZUaGfcfFWc8Uleurur_cdePBjlljCj3HuMqBEzJVZAetRLXiXVNeWgKrSe2s2pwbUDXOoJG-b2Nie4uCDJmfB0SEhBbZRNk77EMNtJqveTwHBiqGhSJkesz7vO_gLOsgt4QCEP5oDfcCQ",
+            "location": {
+                "lat": 42.35699109999999,
+                "lng": -71.05837129999999
+            },
+            "name": "Old South Meeting House",
+            "visitCount": 0
+        },
+        "ChIJ3wdaBoBw44kRw03LAexT5_c": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAARF6-Oj6rejohiBgWFidbCZ0_rvdM7_YER-T4otW2KJINT7Vg7jWVdDY7N5rdyztVGKzLJF3frZMQq-B5j_CiG8VnPUj5RHDAQLcOQpHc8ljZ7Q_zN890FQr8YHZW2T9XEhCL5koFUDPA_no7tb_ZPaKAGhQJpLT4Ez2E0oMWUgRHVdcDhTm15g",
+            "location": {
+                "lat": 42.3518682,
+                "lng": -71.0499925
+            },
+            "name": "Boston Children's Museum",
+            "visitCount": 0
+        },
+        "ChIJ4bwEPIBw44kRs7STmn977tE": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAAJiQwpjdtYkN5Ur4oudmJwo1NrVkpUkX4gNUbT0tQyOPnExdT2jLcOKgi0n6A0BlZeRGBX9H-dFWUeOldg7N-U-SQmr1JXqCzwE1unEKbrN1lzzpNgzJsqlH9oU0sQJghEhBMQK512h8sqKoUJHg1WmASGhQBPdrtHhE_nglE2iXNKhKowahsVQ",
+            "location": {
+                "lat": 42.35217859999999,
+                "lng": -71.0512797
+            },
+            "name": "Boston Tea Party Ships & Museum",
+            "visitCount": 0
+        },
+        "ChIJ70CL0VR344kRbXPCPEErqMs": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAA_cPeyhjlE3QqyBnq1xT6M3OQ3DKlIb47qV0Y4xJypmIfIulhZm7497435SEoGw0vveFAVxiEDvvTH12q5CGpftPJZL4B4UqpU6_p3aAM_PmVmLGFfyeuCv1L3BPtNw1fEhAYTh-pvHj3hEQiI15xD4Y_GhR7adMqm2F1cehIEU1yiCZB5dAIAg",
+            "location": {
+                "lat": 42.36225399999999,
+                "lng": -71.097537
+            },
+            "name": "MIT Museum",
+            "visitCount": 0
+        },
+        "ChIJB6iG3oVw44kRc4j2xzzxIeY": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAAdK9kY9AGDnCHacwNeMi9ip_gwZgzMOGCx59itpFkyE8SpvqMpyJOnWlazxg4g16R8iK9znmkWa6Zr2H9ainuSIRBUjdzvKmzcOSLsGSqpdh-F9NyQQdZznaiBmJsq7dcEhCRZ95pOkf2QfkXE4gy65YKGhTjD1SfDNhjqQjWp4yG3bt0EN65yQ",
+            "location": {
+                "lat": 42.3600266,
+                "lng": -71.05615949999999
+            },
+            "name": "Bostonian Society Museum Shop",
+            "visitCount": 0
+        },
+        "ChIJDXUUlIRw44kRG_CVf5De4yM": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAAHLZDSu9QLgRQyOIDaqg8oSX6Wt3U3tagCG4cU4UZCBVCRnlHy3Rg94MDGbXKs194QzMiWQU85PhzvyMexCZTaltmxLoQ4sDLQV34hUOQuLnkwV6XbIuC0c8-6ctErmbsEhCkMB0QLStAxaPfuZTBeoORGhQzd20GLWEaV_SAnVZWs5_6jgVaaA",
+            "location": {
+                "lat": 42.3580581,
+                "lng": -71.06025129999999
+            },
+            "name": "King's Chapel",
+            "visitCount": 0
+        },
+        "ChIJLxyMQZZw44kRxTZwZ5PGulc": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAAvncgktGIfESPr1iUA3Al6YY79wm4854TYzYWCTuQwPQazjQ3HdHeW6SZ4YQ9ivaK7wyVqRm9K_0R4wLUN8jgDt21yqBgaLeHLCVZqOYgP7OAMMGeHoZdaM-HxAcrw13qEhAdL2-x3ofUDhA-5icJQA3LGhT7o_uA5RI1CH5Wg2nn8TaSz4RJHQ",
+            "location": {
+                "lat": 42.3675224,
+                "lng": -71.0713361
+            },
+            "name": "Museum of Science",
+            "visitCount": 0
+        },
+        "ChIJO_EfVJtw44kRyUaGBYXShhU": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAAqT5dOf9cMOQAsKjjY8WyUzxGsL_muxrb28Ed0L8PLTpbDjtAx4Cxm68kBjB6sNb4WdFgLRocRQlNSwR25-3f3MUuY3x5vWqxCnTx8ewUrvwYc8KWQxjFPleltrosi2B5EhA3yxOJXftgulq0TBhgD6ZtGhSaJLFgCiShMZriYSkSyaERqzdlmA",
+            "location": {
+                "lat": 42.357945,
+                "lng": -71.0620299
+            },
+            "name": "Boston Athenæum",
+            "visitCount": 0
+        },
+        "ChIJS3rn5w1644kRZNWVxNY_Ay8": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRZAAAA9xbj9jXqqRQRPoPB3OBvItuDYBNOT8wz7v5piFZKOwOdRaPJnpqkL-i89YARY2u59ZGfDOwQniTWn1o-UmEVBtMlx8yJx7HaZR-7dadsgDdOQShIZTLQV78wmHG-BJN8EhCiivzSe703amenT6Edl79EGhRjX1ZED5UXKUgE8Uy1koPPUMNC_A",
+            "location": {
+                "lat": 42.339381,
+                "lng": -71.094048
+            },
+            "name": "Museum of Fine Arts, Boston",
+            "visitCount": 0
+        },
+        "ChIJSYXWkop544kRvTojD82gxdo": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAA7daup1EsYR8G4oc6lePikD15V9j0q31gbfb_s-mRSOhRso1-Okwjn891nCZlZYgwIGRMNhwSqCQJrlbTN4QC28We_ZnLCqaL5Vk4qGfij1zrTkSu6r8HNWBK_B1oKDF7EhAFxxiHqfz6lkQYWc7MqxS1GhT0hqUNe3guUWNJ1lYEzV4lOD-2Og",
+            "location": {
+                "lat": 42.33818,
+                "lng": -71.099121
+            },
+            "name": "Isabella Stewart Gardner Museum",
+            "visitCount": 0
+        },
+        "ChIJe9YuL0F344kRe7q8SEaMPWE": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAAUrpXQ7cFS0kJAx7HTOm5uADPcKKucFqeNbyx3hvLmny4J1OtPop3Et_eCTa1qydgotjYsmmvrgKJtd9PZt2xA3AxC8NyoBNBnm5K3kDhd09QSM6kSmigbyg0-Pulp7ypEhAofxuKB7RsLvfjsze0iOcYGhQo06BR1Xvgn6E2PtQjqC3yEWY1wA",
+            "location": {
+                "lat": 42.3784626,
+                "lng": -71.1155576
+            },
+            "name": "Harvard Museum of Natural History",
+            "visitCount": 0
+        },
+        "ChIJg_z70yF644kR0aCcg5mTvbc": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAArg2lOfZFXqau3RJrNI-vq9tfOq1hphDnKs4IIb-AOTztk6GRyXUdhYJw-uTkkInXEMyqAgk8q00VmVE2Nh-SDCMnmMJksdj2KdgPq59_roe93koNknyii0Iae1_aXqy7EhB1NVQSR6jIYrycxZ-pG76kGhQffVJoMcvTTZSPmcqqnoKK1O3vcQ",
+            "location": {
+                "lat": 42.34323559999999,
+                "lng": -71.08534089999999
+            },
+            "name": "The William Morris Hunt Memorial Library",
+            "visitCount": 0
+        },
+        "ChIJh-tZaIRw44kR140lhfNrc_g": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAAImFl3lhCG4AwQVCgbJPhk1cWz3FUuBiXgq1Ge1xFWxXnxTVdU3TrlF0Oav-1i1-Em_1XMR9Q9f-OYLQivaCumUyP4sQy7i9FznrH-p06gU64qJCjdfXqJsTL6HGxR6ayEhBeF6SSFRttYLA5mh6pgM5QGhSiTUN5qk27TCADBVSsWRwx4oJDxg",
+            "location": {
+                "lat": 42.3587352,
+                "lng": -71.05745399999999
+            },
+            "name": "Old State House",
+            "visitCount": 0
+        },
+        "ChIJl-Ne0UZ344kReNiRcqmdChI": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAAzJGU1dbcvg-i1HHN-uk6rDuyBoWY1eOicFAkGSmMZ1ciDmlpku_CH-YdqR4wrMR5KzTslVJPYhsiIwyvjrlhAZsmsPHGGdQnpheqBGxFmnDTSun4xsdH70MayxyeAaQgEhBDkxFIVrDFUKfdZYYp2qw0GhR4kYfzxsZHqUqHr7CP7kKFsEWm8g",
+            "location": {
+                "lat": 42.37823300000001,
+                "lng": -71.11475899999999
+            },
+            "name": "Peabody Museum of Archaeology and Ethnology",
+            "visitCount": 0
+        },
+        "ChIJm37paBh544kRhTeCjcrVOd8": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAARuZM0RPB9hdhZIVHPwrwnBesbxsLiMJuARivf0-rJE1795BoN1T_dtS7bHEeB7DcWNdUPb7nZIwZWPoNrOBNIB4lzJFHhcZLW6Cp9FvsEjWEsj0D-2xtPcpytstVKZoKEhCKNLv-BUyY9Ifq-5Rl5wwvGhTppBLlP-xS3Yqv1Gmg1Qeb0UYoyA",
+            "location": {
+                "lat": 42.31049580000001,
+                "lng": -71.1348046
+            },
+            "name": "Larz Anderson Auto Museum",
+            "visitCount": 0
+        },
+        "ChIJm4SMwRl544kRVbrbXMtaKxw": {
+            "description": "FAKEDESCRIPTION",
+            "image": "FAKEIMAGE.png",
+            "location": {
+                "lat": 42.3108751,
+                "lng": -71.1351168
+            },
+            "name": "Putterham School",
+            "visitCount": 0
+        },
+        "ChIJqf8XbER344kRkYOxBBtD7w8": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAArzmYhQ6zNa2yxUv71lSCyQK2kekoLe592M9oSzenkoRxaFE_bkUW3Hc7yz9Hfrnh3OXJ3btk6u_XHPkskTexs5n9UH0qxJ8CasgL3Am3bOhouGuv3I8EfEsH8Qhg3-byEhBREhJM9pPSBVUyTHR1em6iGhQBd8eojOTtU0z_kHx3tp_oI3ymTA",
+            "location": {
+                "lat": 42.3739849,
+                "lng": -71.11394670000001
+            },
+            "name": "Busch-Reisinger Museum",
+            "visitCount": 0
+        },
+        "ChIJs87ZP4Zw44kR3ssZZsAzsKY": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAAxrtE-FiDIz1_3UrFKqlpkcxkGLuKfldIxje6jlm0fhb42Bc5toDrnjIVIEt2oi9NvbXDJKw-P1Oc94Ape9x0oBJeMBnsvbR_QCP5i2_IbjzN7Q2ge2QbQsojsIlXu9xYEhBX8yWo3alh9Ug8MtP8zf4kGhQEAk6Gg-QPPCl1YKtEhPmbti3-jw",
+            "location": {
+                "lat": 42.36003329999999,
+                "lng": -71.0562303
+            },
+            "name": "Ancient and Honorable Artillery Company",
+            "visitCount": 0
+        },
+        "ChIJtT5ZHIlw44kRzCtDBAjPP3A": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAAZJGR5SmUhrDn9Wh9rUmoQIcSmY5zm6CQcGbH5fG_5d_g9V08m23e9k72-uKIyYi-W-ybFPJcGTIUYSf5RLAQFOXI3DqApFPDq7ZPyrDD9lH_1rJ10f0SWbxSBSgVoXyzEhAOh8aXjkM9uSEdR_FP5HJ9GhTgus5cINiRg3idnw0KOmLoFyjYsg",
+            "location": {
+                "lat": 42.36373789999999,
+                "lng": -71.0536997
+            },
+            "name": "The Paul Revere House",
+            "visitCount": 0
+        },
+        "ChIJxTCEOnlw44kROtPtIpMFsXo": {
+            "description": "FAKEDESCRIPTION",
+            "image": "CmRaAAAApl-0kT3nmsge41tWsYMPXKbV79dSDV1oS8_yGK-vbMIcvZheNkAFYx5O-1maWQ5xboAvVmAhwO5kVDFGC6t-ffQslQQXn4wTfX8sSmZtAVzKMn2-EbRdGIFx-wMzv6_REhDorTM5QX5jVlSDOnQNwQuvGhRB8l4k_uenwICjaNEDV8G9BWGsZQ",
+            "location": {
+                "lat": 42.3528824,
+                "lng": -71.04301099999999
+            },
+            "name": "The Institute Of Contemporary Art",
+            "visitCount": 0
+        }
+    },
+    "user": {
+        "U123456": {
+            "HighScore": 69,
+            "LifetimeScore": 69,
+            "game": "888888",
+            "visited": {
+                "ChIJkQHilXSduokRuI4jpprMASY": "1"
+            }
+        },
+        "U98765": {
+            "HighScore": 96,
+            "LifetimeScore": 96,
+            "game": "777777",
+            "visited": {
+                "ChIJkQHilXSduokRuI4jpprMASY": "2"
+            }
+        }
+    }
+}
