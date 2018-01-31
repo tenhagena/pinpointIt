@@ -1,0 +1,12 @@
+{
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "rules": {
+    "func-names": ["error", "never"],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/prop-types": 0,
+    "no-shadow": "off",
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "react/prefer-stateless-function": "off"
+  }
+}
