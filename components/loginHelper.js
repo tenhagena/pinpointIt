@@ -18,11 +18,9 @@ export default async function loginWithFacebook() {
     const credential = firebase.auth.FacebookAuthProvider.credential(token);
 
     // Sign in with credential from the Facebook user.
-    firebase
-      .auth()
-      .signInWithCredential(credential)
-      .catch((error) => {
+    firebase.auth().signInWithCredential(credential);
+    /* .catch((error) => {
         console.log(error);
-      });
+      }); */
   }
 }

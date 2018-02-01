@@ -51,7 +51,7 @@ export default class GameMap extends React.Component {
             coordinates: { latitude: element.location.lat, longitude: element.location.lng },
           });
         });
-        console.log(markerLocations);
+        // console.log(markerLocations);
         this.setState({ markers: markerLocations });
       });
   }

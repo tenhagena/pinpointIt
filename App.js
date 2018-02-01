@@ -41,7 +41,7 @@ export default class App extends React.Component {
     firebase.initializeApp(firebaseConfig);
     firebase.auth().onAuthStateChanged((user) => {
       if (user != null) {
-        console.log('We are authenticated now!');
+        // console.log('We are authenticated now!');
         storeHighScore(firebase.auth.currentUser);
         // Redirect to new page
         this.setState({ loggedIn: true });
