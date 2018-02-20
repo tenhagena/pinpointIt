@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 
 export default class GameMap extends React.Component {
   static navigationOptions = {
-    title: 'Chat with Lucy',
+    title: 'Map',
     headerTintColor: 'blue',
   };
   constructor(props) {
@@ -61,12 +61,13 @@ export default class GameMap extends React.Component {
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          initialRegion={{
+          region={{
             latitude: 42.3361,
             longitude: -71.0954,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+          provider="google"
         >
           {this.state.markers.map(marker => (
             <MapView.Marker
