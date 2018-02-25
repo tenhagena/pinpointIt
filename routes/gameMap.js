@@ -25,17 +25,23 @@ const styles = StyleSheet.create({
 
 const startGame = () => {
   const user = firebase.auth().currentUser;
-  console.log(`Test id ${user.uid}`);
-  const key = firebase
+  const { key } = firebase
     .database()
-    .ref(`/users/${user.uid}`)
+    .ref(`user/${user.uid}`)
     .child('game')
-    .push().key;
+    .push();
   firebase
     .database()
-    .ref(`/users/${user.uid}`)
-    .set({
+    .ref(`user/${user.uid}`)
+    .update({
       game: key,
+    });
+  firebase
+    .database()
+    .ref('/game/')
+    .child(key)
+    .update({
+      started: true,
     });
 };
 
@@ -46,20 +52,13 @@ export default class GameMap extends React.Component {
   };
   constructor(props) {
     super(props);
+
     this.state = { markers: [] };
     this.getLocations = this.getLocations.bind(this);
   }
 
-  componentDidMount() {
-    const user = firebase.auth().currentUser;
-    let currentGameId;
-    if (user !== null) {
-      currentGameId = user.game;
-    }
-    if (currentGameId !== null) {
-      console.log(`The current game id is ${currentGameId}`);
-      this.setState({ gameID: currentGameId });
-    }
+  componentWillMount() {
+    this.currentGameId();
   }
 
   getLocations() {
@@ -84,6 +83,20 @@ export default class GameMap extends React.Component {
       });
   }
 
+  currentGameId() {
+    // Check if we're in a game
+    let newTest;
+    const user = firebase.auth().currentUser.uid;
+    firebase
+      .database()
+      .ref(`/user/${user}`)
+      .on('value', (snapshot) => {
+        newTest = snapshot.val().game;
+        this.setState({ gameID: newTest });
+      });
+    return newTest;
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -106,8 +119,11 @@ export default class GameMap extends React.Component {
           ))}
         </MapView>
         <Button title="Get Locations" onPress={this.getLocations} />
-        <Button title="Start Game" onPress={startGame} />
-        <Text>Your current game ID: {this.state.gameID}</Text>
+        {this.state.gameID != null ? (
+          <Text>Your current game ID: {this.state.gameID}</Text>
+        ) : (
+          <Button title="Start Game" onPress={startGame} />
+        )}
       </View>
     );
   }

@@ -1,7 +1,7 @@
 import React from 'react';
-import { AsyncStorage, Alert } from 'react-native';
+// import { AsyncStorage, Alert } from 'react-native';
 import * as firebase from 'firebase';
-import { StackNavigator, TabNavigator, DrawerNavigator, TabBarBottom } from 'react-navigation';
+import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
 
 // Our main screens (routes)
 import Login from './routes/login';
@@ -98,7 +98,7 @@ export default class App extends React.Component {
     firebase.initializeApp(firebaseConfig);
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log(`Current user is ${firebase.auth.currentUser}`);
+        // console.log(`Current user is ${firebase.auth.currentUser}`);
         checkUser(user);
         // Redirect to new page
         this.setState({ signedIn: true });
