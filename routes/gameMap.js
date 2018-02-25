@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Button } from 'react-native';
+import { StyleSheet, View, Button, Text } from 'react-native';
 import { MapView } from 'expo';
 import * as firebase from 'firebase';
 
@@ -23,6 +23,22 @@ const styles = StyleSheet.create({
   },
 });
 
+const startGame = () => {
+  const user = firebase.auth().currentUser;
+  console.log(`Test id ${user.uid}`);
+  const key = firebase
+    .database()
+    .ref(`/users/${user.uid}`)
+    .child('game')
+    .push().key;
+  firebase
+    .database()
+    .ref(`/users/${user.uid}`)
+    .set({
+      game: key,
+    });
+};
+
 export default class GameMap extends React.Component {
   static navigationOptions = {
     title: 'Map',
@@ -32,6 +48,18 @@ export default class GameMap extends React.Component {
     super(props);
     this.state = { markers: [] };
     this.getLocations = this.getLocations.bind(this);
+  }
+
+  componentDidMount() {
+    const user = firebase.auth().currentUser;
+    let currentGameId;
+    if (user !== null) {
+      currentGameId = user.game;
+    }
+    if (currentGameId !== null) {
+      console.log(`The current game id is ${currentGameId}`);
+      this.setState({ gameID: currentGameId });
+    }
   }
 
   getLocations() {
@@ -78,6 +106,8 @@ export default class GameMap extends React.Component {
           ))}
         </MapView>
         <Button title="Get Locations" onPress={this.getLocations} />
+        <Button title="Start Game" onPress={startGame} />
+        <Text>Your current game ID: {this.state.gameID}</Text>
       </View>
     );
   }

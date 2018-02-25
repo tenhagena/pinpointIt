@@ -1,55 +1,17 @@
 import React from 'react';
-import { AsyncStorage, Platform } from 'react-native';
+import { AsyncStorage, Alert } from 'react-native';
 import * as firebase from 'firebase';
-import { StackNavigator, TabNavigator, DrawerNavigator } from 'react-navigation';
+import { StackNavigator, TabNavigator, DrawerNavigator, TabBarBottom } from 'react-navigation';
 
 // Our main screens (routes)
 import Login from './routes/login';
 import GameMap from './routes/gameMap';
 import Progress from './routes/progress';
 
-/**
- * Test function to store highscore
- */
-function storeHighScore(user, score) {
-  if (user != null) {
-    firebase
-      .database()
-      .ref(`user/${user.uid}`)
-      .set({
-        highScore: score,
-      });
-  }
-}
-
 /** ROUTES (maybe move to new file instead of keeping them here in the entrypoint?) */
 // Component: createRootNavigator - will determine if we're currently signed in or signed out
 // Route: SignedIn
 // Route: SignedOut
-
-// STATUS - not currently being used
-export const createRootNavigator = (signedIn = false) =>
-  StackNavigator(
-    {
-      SignedIn: {
-        screen: SignedIn,
-        navigationOptions: {
-          gesturesEnabled: false,
-        },
-      },
-      SignedOut: {
-        screen: SignedOut,
-        navigationOptions: {
-          gesturesEnabled: false,
-        },
-      },
-    },
-    {
-      headerMode: 'none',
-      mode: 'modal',
-      initialRouteName: signedIn ? 'SignedIn' : 'SignedOut',
-    },
-  );
 
 // Component: SignedOut
 // Route: Login - The login page
@@ -58,35 +20,65 @@ const SignedOut = StackNavigator({
 });
 
 /* Per style guidelines, we're going to want to use a TabNavigator on iOS,
-** and a DrawerNavigator on Android
+** and a DrawerNavigator on Android -- EDIT: maybe not
 */
+
+/*
 const determineNavType = (props) => {
   if (Platform.OS === 'ios') {
     return TabNavigator(props);
-  } else if (Platform.OS === 'android') return DrawerNavigator(props);
+  } else if (Platform.OS === 'android') return TabNavigator(props);
   return null;
-};
+}; */
 
 // Component: SignedIn
 // Route: GameMap - The game map
 // Route: TBD
 // Route: TBD
-const SignedIn = determineNavType({
-  GameMap: {
-    screen: GameMap,
-    navigationOptions: {
-      tabBarLabel: 'Map',
+const SignedIn = TabNavigator(
+  {
+    GameMap: {
+      screen: GameMap,
+      navigationOptions: {
+        tabBarLabel: 'Map',
+      },
+    },
+    Progress: {
+      screen: Progress,
+      navigationOptions: {
+        tabBarLabel: 'Progress',
+      },
     },
   },
-  Progress: {
-    screen: Progress,
-    navigationOptions: {
-      tabBarLabel: 'Progress',
-    },
+  {
+    tabBarComponent: TabBarBottom,
+    tabBarPosition: 'bottom',
   },
-});
+);
 
 /** End Routes */
+
+/**
+ * Test function to store highscore
+ */
+const checkUser = (user) => {
+  if (user != null) {
+    firebase
+      .database()
+      .ref(`/user/${user.uid}`)
+      .once('value', (snapshot) => {
+        const exists = snapshot.val() !== null;
+        if (!exists) {
+          firebase
+            .database()
+            .ref(`/user/${user.uid}`)
+            .update({
+              created: true,
+            });
+        }
+      });
+  }
+};
 
 export default class App extends React.Component {
   constructor(props) {
@@ -94,7 +86,7 @@ export default class App extends React.Component {
     this.state = { signedIn: false };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // Initialize Firebase
     const firebaseConfig = {
       apiKey: 'AIzaSyB2ZZEFkIIFeW_un8kSkaEocEgaDGMuxIU',
@@ -105,9 +97,9 @@ export default class App extends React.Component {
 
     firebase.initializeApp(firebaseConfig);
     firebase.auth().onAuthStateChanged((user) => {
-      if (user != null) {
-        // console.log('We are authenticated now!');
-        storeHighScore(firebase.auth.currentUser);
+      if (user) {
+        console.log(`Current user is ${firebase.auth.currentUser}`);
+        checkUser(user);
         // Redirect to new page
         this.setState({ signedIn: true });
       }
