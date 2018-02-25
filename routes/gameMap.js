@@ -87,14 +87,17 @@ export default class GameMap extends React.Component {
     // Check if we're in a game
     let newTest;
     const user = firebase.auth().currentUser.uid;
-    firebase
-      .database()
-      .ref(`/user/${user}`)
-      .on('value', (snapshot) => {
-        newTest = snapshot.val().game;
-        this.setState({ gameID: newTest });
-      });
-    return newTest;
+    if (user) {
+      firebase
+        .database()
+        .ref(`/user/${user}`)
+        .on('value', (snapshot) => {
+          if (snapshot.val() != null) {
+            newTest = snapshot.val().game;
+            this.setState({ gameID: newTest });
+          }
+        });
+    }
   }
 
   render() {

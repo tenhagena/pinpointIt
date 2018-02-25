@@ -63,7 +63,7 @@ const SignedIn = TabNavigator(
  */
 const checkUser = (user) => {
   if (user != null) {
-    firebase
+    return firebase
       .database()
       .ref(`/user/${user.uid}`)
       .once('value', (snapshot) => {
@@ -78,6 +78,7 @@ const checkUser = (user) => {
         }
       });
   }
+  return null;
 };
 
 export default class App extends React.Component {
@@ -99,9 +100,8 @@ export default class App extends React.Component {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // console.log(`Current user is ${firebase.auth.currentUser}`);
-        checkUser(user);
+        checkUser(user).then(this.setState({ signedIn: true }));
         // Redirect to new page
-        this.setState({ signedIn: true });
       }
     });
   }
