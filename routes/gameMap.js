@@ -59,7 +59,8 @@ export default class GameMap extends React.Component {
       longitudeDelta: 0.0421,
     }
     var umarker = {
-      title: "You"
+      title: "You",
+      coordinates: { latitude: 0, longitude: 0 }
     }
     this.state = { markers: [], umarker: umarker };
     this.getLocations = this.getLocations.bind(this);
