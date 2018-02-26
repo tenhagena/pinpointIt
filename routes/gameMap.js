@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Button } from 'react-native';
+import { StyleSheet, View, Button, Text } from 'react-native';
 import { MapView } from 'expo';
 import * as firebase from 'firebase';
 
@@ -23,15 +23,42 @@ const styles = StyleSheet.create({
   },
 });
 
+const startGame = () => {
+  const user = firebase.auth().currentUser;
+  const { key } = firebase
+    .database()
+    .ref(`user/${user.uid}`)
+    .child('game')
+    .push();
+  firebase
+    .database()
+    .ref(`user/${user.uid}`)
+    .update({
+      game: key,
+    });
+  firebase
+    .database()
+    .ref('/game/')
+    .child(key)
+    .update({
+      started: true,
+    });
+};
+
 export default class GameMap extends React.Component {
   static navigationOptions = {
-    title: 'Chat with Lucy',
+    title: 'Map',
     headerTintColor: 'blue',
   };
   constructor(props) {
     super(props);
+
     this.state = { markers: [] };
     this.getLocations = this.getLocations.bind(this);
+  }
+
+  componentWillMount() {
+    this.currentGameId();
   }
 
   getLocations() {
@@ -56,17 +83,35 @@ export default class GameMap extends React.Component {
       });
   }
 
+  currentGameId() {
+    // Check if we're in a game
+    let newTest;
+    const user = firebase.auth().currentUser.uid;
+    if (user) {
+      firebase
+        .database()
+        .ref(`/user/${user}`)
+        .on('value', (snapshot) => {
+          if (snapshot.val() != null) {
+            newTest = snapshot.val().game;
+            this.setState({ gameID: newTest });
+          }
+        });
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          initialRegion={{
+          region={{
             latitude: 42.3361,
             longitude: -71.0954,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+          provider="google"
         >
           {this.state.markers.map(marker => (
             <MapView.Marker
@@ -77,6 +122,11 @@ export default class GameMap extends React.Component {
           ))}
         </MapView>
         <Button title="Get Locations" onPress={this.getLocations} />
+        {this.state.gameID != null ? (
+          <Text>Your current game ID: {this.state.gameID}</Text>
+        ) : (
+          <Button title="Start Game" onPress={startGame} />
+        )}
       </View>
     );
   }
