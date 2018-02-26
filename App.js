@@ -73,7 +73,7 @@ const checkUser = (user) => {
             .database()
             .ref(`/user/${user.uid}`)
             .update({
-              created: true,
+              HighScore: 0,
             });
         }
       });
@@ -102,6 +102,9 @@ export default class App extends React.Component {
         // console.log(`Current user is ${firebase.auth.currentUser}`);
         checkUser(user).then(this.setState({ signedIn: true }));
         // Redirect to new page
+      }
+      else {
+        this.setState({ signedIn: false });
       }
     });
   }
