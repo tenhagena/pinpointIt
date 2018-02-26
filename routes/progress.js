@@ -22,16 +22,26 @@ export default class HomeScreen extends React.Component {
   }
 
   logOut() {
-    this.setState({ signedIn: false });
     firebase.auth().signOut().then(function () {
       console.log("SignedOut");
     })
+  }
+
+  endGame() {
+    const user = firebase.auth().currentUser;
+    firebase
+      .database()
+      .ref(`user/${user.uid}`)
+      .update({
+        game: null,
+      });
   }
   render() {
     return (
       <View style={styles.container}>
         <Text>Game Progress here</Text>
         <Button title="Log Out" onPress={this.logOut} />
+        <Button title="End Game" onPress={this.endGame} />
       </View>
     );
 
