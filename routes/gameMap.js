@@ -52,6 +52,12 @@ export default class GameMap extends React.Component {
   };
   constructor(props) {
     super(props);
+    this.region = {
+      latitude: 42.3361,
+      longitude: -71.0954,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    }
     var umarker = {
       title: "You"
     }
@@ -63,12 +69,7 @@ export default class GameMap extends React.Component {
   componentWillMount() {
     this.currentGameId();
     this.setState({
-      region: {
-        latitude: 42.3361,
-        longitude: -71.0954,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }
+      region: this.region
     });
     this._getLocationAsync();
   }
@@ -91,7 +92,7 @@ export default class GameMap extends React.Component {
           });
         });
         // console.log(markerLocations);
-        this.setState({ markers: markerLocations });
+        this.setState({ markers: markerLocations, region: this.region });
       });
   }
 
@@ -113,7 +114,6 @@ export default class GameMap extends React.Component {
   }
 
 
-
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
@@ -127,13 +127,13 @@ export default class GameMap extends React.Component {
         title: "You",
         coordinates: { latitude: location.coords.latitude, longitude: location.coords.longitude },
       };
-      this.setState({ umarker: element })
+      this.setState({ umarker: element, region: this.region })
     });
 
   }
 
   onRegionChange(region) {
-    this.setState({ region: region });
+    this.region = region;
   }
 
   render() {
@@ -141,7 +141,7 @@ export default class GameMap extends React.Component {
       <View style={styles.container}>
         <MapView
           region={this.state.region}
-          onRegionChangeComplete={this.onRegionChange}
+          onRegionChange={this.onRegionChange}
           style={styles.map}
 
           provider="google"
