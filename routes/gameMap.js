@@ -144,6 +144,7 @@ export default class GameMap extends React.Component {
           region={this.state.region}
           onRegionChange={this.onRegionChange}
           style={styles.map}
+          showsUserLocation={true}
 
           provider="google"
         >
@@ -155,12 +156,12 @@ export default class GameMap extends React.Component {
             />
           ))}
 
-          <MapView.Marker
+          {/* <MapView.Marker
             image={require('../assets/userLocation.png')}
             key={this.state.umarker.title}
             coordinate={this.state.umarker.coordinates}
             title={this.state.umarker.title}
-          />
+          /> */}
         </MapView>
         <Button title="Get Locations" onPress={this.getLocations} />
         {this.state.gameID != null ? (
