@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Button, Text } from 'react-native';
-import { MapView } from 'expo';
+import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
 
 const styles = StyleSheet.create({
@@ -52,14 +52,48 @@ export default class GameMap extends React.Component {
   };
   constructor(props) {
     super(props);
-
-    this.state = { markers: [] };
+    this.region = {
+      latitude: 42.3361,
+      longitude: -71.0954,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    };
+    const umarker = {
+      title: 'You',
+      coordinates: { latitude: 0, longitude: 0 },
+    };
+    this.state = { markers: [], umarker, region: this.region };
     this.getLocations = this.getLocations.bind(this);
+    this.onRegionChange = this.onRegionChange.bind(this);
   }
 
   componentWillMount() {
     this.currentGameId();
+    this.setState({
+      region: this.region,
+    });
+    this.getLocationAsync();
   }
+
+  onRegionChange(region) {
+    this.setState({ region, umarker: this.umarker });
+  }
+  getLocationAsync = async () => {
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      console.log(status);
+    }
+    await Location.watchPositionAsync(
+      { distanceInterval: 1, enableHighAccuracy: true },
+      (location) => {
+        const element = {
+          title: 'You',
+          coordinates: { latitude: location.coords.latitude, longitude: location.coords.longitude },
+        };
+        this.umarker = element;
+      },
+    );
+  };
 
   getLocations() {
     const markerLocations = [];
@@ -79,7 +113,7 @@ export default class GameMap extends React.Component {
           });
         });
         // console.log(markerLocations);
-        this.setState({ markers: markerLocations });
+        this.setState({ markers: markerLocations, region: this.region });
       });
   }
 
@@ -104,13 +138,10 @@ export default class GameMap extends React.Component {
     return (
       <View style={styles.container}>
         <MapView
+          region={this.state.region}
+          onRegionChangeComplete={this.onRegionChange}
           style={styles.map}
-          region={{
-            latitude: 42.3361,
-            longitude: -71.0954,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
+          showsUserLocation={this.state.umarker != null}
           provider="google"
         >
           {this.state.markers.map(marker => (
@@ -120,6 +151,13 @@ export default class GameMap extends React.Component {
               title={marker.title}
             />
           ))}
+
+          {/* <MapView.Marker
+            image={require('../assets/userLocation.png')}
+            key={this.state.umarker.title}
+            coordinate={this.state.umarker.coordinates}
+            title={this.state.umarker.title}
+          /> */}
         </MapView>
         <Button title="Get Locations" onPress={this.getLocations} />
         {this.state.gameID != null ? (
