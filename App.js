@@ -102,8 +102,7 @@ export default class App extends React.Component {
         // console.log(`Current user is ${firebase.auth.currentUser}`);
         checkUser(user).then(this.setState({ signedIn: true }));
         // Redirect to new page
-      }
-      else {
+      } else {
         this.setState({ signedIn: false });
       }
     });

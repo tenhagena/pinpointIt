@@ -18,16 +18,24 @@ export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { signedIn: true };
-    this.logOut = this.logOut.bind(this);
     this.getGame();
+    this.endGame = this.endGame.bind(this);
+    this.getGame = this.getGame.bind(this);
+    this.logOut = this.logOut.bind(this);
   }
 
-  logOut() {
-    firebase.auth().signOut().then(function () {
-      console.log("SignedOut");
-    })
+  getGame() {
+    const user = firebase.auth().currentUser.uid;
+    firebase
+      .database()
+      .ref(`/user/${user}`)
+      .on('value', (snapshot) => {
+        if (snapshot.val() != null) {
+          const newTest = snapshot.val().game;
+          this.setState({ gameID: newTest });
+        }
+      });
   }
-
   endGame() {
     const user = firebase.auth().currentUser;
     firebase
@@ -36,31 +44,24 @@ export default class HomeScreen extends React.Component {
       .update({
         game: null,
       });
+    this.setState({ gameID: null });
   }
-  getGame() {
-    const user = firebase.auth().currentUser.uid;
+  logOut() {
     firebase
-      .database()
-      .ref(`/user/${user}`)
-      .on('value', (snapshot) => {
-        if (snapshot.val() != null) {
-          newTest = snapshot.val().game;
-          this.setState({ gameID: newTest });
-        }
+      .auth()
+      .signOut()
+      .then(() => {
+        console.log('SignedOut');
       });
+    this.setState({ signedIn: false });
   }
   render() {
     return (
       <View style={styles.container}>
         <Text>Game Progress here</Text>
-        <Button title="Log Out" onPress={this.logOut} />
-        {this.state.gameID != null ? (
-          <Button title="End Game" onPress={this.endGame} />
-        ) : (
-            <Text></Text>
-          )}
+        {this.state.signedIn === true ? <Button title="Log Out" onPress={this.logOut} /> : <Text />}
+        {this.state.gameID != null ? <Button title="End Game" onPress={this.endGame} /> : <Text />}
       </View>
     );
-
   }
 }

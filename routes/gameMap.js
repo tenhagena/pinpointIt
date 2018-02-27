@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Button, Text } from 'react-native';
-import { MapView, Permissions, Constants, Location } from 'expo';
+import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
 
 const styles = StyleSheet.create({
@@ -57,12 +57,12 @@ export default class GameMap extends React.Component {
       longitude: -71.0954,
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
-    }
-    var umarker = {
-      title: "You",
-      coordinates: { latitude: 0, longitude: 0 }
-    }
-    this.state = { markers: [], umarker: umarker };
+    };
+    const umarker = {
+      title: 'You',
+      coordinates: { latitude: 0, longitude: 0 },
+    };
+    this.state = { markers: [], umarker, region: this.region };
     this.getLocations = this.getLocations.bind(this);
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -70,10 +70,30 @@ export default class GameMap extends React.Component {
   componentWillMount() {
     this.currentGameId();
     this.setState({
-      region: this.region
+      region: this.region,
     });
-    this._getLocationAsync();
+    this.getLocationAsync();
   }
+
+  onRegionChange(region) {
+    this.setState({ region, umarker: this.umarker });
+  }
+  getLocationAsync = async () => {
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      console.log(status);
+    }
+    await Location.watchPositionAsync(
+      { distanceInterval: 1, enableHighAccuracy: true },
+      (location) => {
+        const element = {
+          title: 'You',
+          coordinates: { latitude: location.coords.latitude, longitude: location.coords.longitude },
+        };
+        this.umarker = element;
+      },
+    );
+  };
 
   getLocations() {
     const markerLocations = [];
@@ -114,38 +134,14 @@ export default class GameMap extends React.Component {
     }
   }
 
-
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      this.setState({
-        errorMessage: 'Permission to access location was denied',
-      });
-    }
-
-    await Location.watchPositionAsync({ distanceInterval: 0.1, enableHighAccuracy: true }, (location) => {
-      var element = {
-        title: "You",
-        coordinates: { latitude: location.coords.latitude, longitude: location.coords.longitude },
-      };
-      this.setState({ umarker: element, region: this.region })
-    });
-
-  }
-
-  onRegionChange(region) {
-    this.region = region;
-  }
-
   render() {
     return (
       <View style={styles.container}>
         <MapView
           region={this.state.region}
-          onRegionChange={this.onRegionChange}
+          onRegionChangeComplete={this.onRegionChange}
           style={styles.map}
-          showsUserLocation={true}
-
+          showsUserLocation={this.state.umarker != null}
           provider="google"
         >
           {this.state.markers.map(marker => (
@@ -167,8 +163,8 @@ export default class GameMap extends React.Component {
         {this.state.gameID != null ? (
           <Text>Your current game ID: {this.state.gameID}</Text>
         ) : (
-            <Button title="Start Game" onPress={startGame} />
-          )}
+          <Button title="Start Game" onPress={startGame} />
+        )}
       </View>
     );
   }
