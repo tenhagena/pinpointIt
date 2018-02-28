@@ -98,28 +98,33 @@ export default class GameMap extends React.Component {
       });
   }
   startGame() {
-    const user = firebase.auth().currentUser;
-    const { key } = firebase
-      .database()
-      .ref(`user/${user.uid}`)
-      .child('game')
-      .push();
-    firebase
-      .database()
-      .ref(`user/${user.uid}`)
-      .update({
-        game: key,
+    getLocation(this.state.umarker, 1000)
+      .then((nextLoc) => {
+        console.log(nextLoc);
+        this.setState({ nextLocation: nextLoc });
+      })
+      .then(() => {
+        const user = firebase.auth().currentUser;
+        const { key } = firebase
+          .database()
+          .ref(`user/${user.uid}`)
+          .child('game')
+          .push();
+        firebase
+          .database()
+          .ref(`user/${user.uid}`)
+          .update({
+            game: key,
+          });
+        firebase
+          .database()
+          .ref('/game/')
+          .child(key)
+          .update({
+            started: true,
+            nextLoc: this.state.nextLocation,
+          });
       });
-    firebase
-      .database()
-      .ref('/game/')
-      .child(key)
-      .update({
-        started: true,
-      });
-    getLocation(this.state.umarker, 1000).then((nextLoc) => {
-      this.setState({ nextLocation: nextLoc });
-    });
   }
 
   currentGameId() {
@@ -134,6 +139,18 @@ export default class GameMap extends React.Component {
           if (snapshot.val() != null) {
             newTest = snapshot.val().game;
             this.setState({ gameID: newTest });
+            if (newTest) {
+              firebase
+                .database()
+                .ref(`/game/${newTest}`)
+                .on('value', (snapshot) => {
+                  if (snapshot.val() != null) {
+                    if (snapshot.val().nextLoc != null) {
+                      this.setState({ nextLocation: snapshot.val().nextLoc });
+                    }
+                  }
+                });
+            }
           }
         });
     }

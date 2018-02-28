@@ -40,8 +40,13 @@ async function getAllLocations(latitude, longitude, uRad) {
     .once('value');
   const placeName = snapshot.val();
   const testlocations = [];
-  Object.values(placeName).forEach((element) => {
+  const keysOfLocs = [];
+  Object.keys(placeName).forEach((element) => {
+    keysOfLocs.push(element);
+  });
+  Object.values(placeName).forEach((element, index) => {
     testlocations.push({
+      placeID: keysOfLocs[index],
       name: element.name,
       coordinates: { latitude: element.location.lat, longitude: element.location.lng },
       image: element.image,
