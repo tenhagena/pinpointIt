@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Button, Text } from 'react-native';
 import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
+import getLocation from '../components/getLocation';
 
 const styles = StyleSheet.create({
   container: {
@@ -23,28 +24,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const startGame = () => {
-  const user = firebase.auth().currentUser;
-  const { key } = firebase
-    .database()
-    .ref(`user/${user.uid}`)
-    .child('game')
-    .push();
-  firebase
-    .database()
-    .ref(`user/${user.uid}`)
-    .update({
-      game: key,
-    });
-  firebase
-    .database()
-    .ref('/game/')
-    .child(key)
-    .update({
-      started: true,
-    });
-};
-
 export default class GameMap extends React.Component {
   static navigationOptions = {
     title: 'Map',
@@ -65,6 +44,7 @@ export default class GameMap extends React.Component {
     this.state = { markers: [], umarker, region: this.region };
     this.getLocations = this.getLocations.bind(this);
     this.onRegionChange = this.onRegionChange.bind(this);
+    this.startGame = this.startGame.bind(this);
   }
 
   componentWillMount() {
@@ -116,6 +96,31 @@ export default class GameMap extends React.Component {
         this.setState({ markers: markerLocations, region: this.region });
       });
   }
+  startGame() {
+    const user = firebase.auth().currentUser;
+    const { key } = firebase
+      .database()
+      .ref(`user/${user.uid}`)
+      .child('game')
+      .push();
+    firebase
+      .database()
+      .ref(`user/${user.uid}`)
+      .update({
+        game: key,
+      });
+    firebase
+      .database()
+      .ref('/game/')
+      .child(key)
+      .update({
+        started: true,
+      });
+
+    getLocation(this.state.umarker, 1000).then((location) => {
+      this.setState({ nextLocation: location });
+    });
+  }
 
   currentGameId() {
     // Check if we're in a game
@@ -163,7 +168,7 @@ export default class GameMap extends React.Component {
         {this.state.gameID != null ? (
           <Text>Your current game ID: {this.state.gameID}</Text>
         ) : (
-          <Button title="Start Game" onPress={startGame} />
+          <Button title="Start Game" onPress={this.startGame} />
         )}
       </View>
     );
