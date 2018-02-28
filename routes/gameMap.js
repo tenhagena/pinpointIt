@@ -116,8 +116,10 @@ export default class GameMap extends React.Component {
       .update({
         started: true,
       });
-
-    this.setState({ nextLocation: getLocation(this.state.umarker, 1000) });
+    getLocation(this.state.umarker, 1000).then((nextLoc) => {
+      console.log(nextLoc);
+      this.setState({ nextLocation: nextLoc });
+    });
   }
 
   currentGameId() {
@@ -154,6 +156,17 @@ export default class GameMap extends React.Component {
               title={marker.title}
             />
           ))}
+
+          {this.state.nextLocation != null ? (
+            <MapView.Marker
+              image={require('../assets/userLocation.png')}
+              key={this.state.nextLocation.name}
+              coordinate={this.state.nextLocation.coordinates}
+              title={this.state.nextLocation.name}
+            />
+          ) : (
+            <Text>No Next Location</Text>
+          )}
 
           {/* <MapView.Marker
             image={require('../assets/userLocation.png')}

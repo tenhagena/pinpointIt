@@ -25,10 +25,9 @@ async function GetAllDistances(latitude, longitude, uRad, locations) {
     const len = Object(Object(newData.rows[0]).elements[0]).distance.value;
     if (len < uRad) {
       validLocs.push(element);
-      console.log(element);
     }
   }
-  return locations;
+  return validLocs;
 }
 
 async function getAllLocations(latitude, longitude, uRad) {
@@ -61,6 +60,5 @@ export default async function getLocation(uPosition, uRad) {
   } catch (e) {
     console.log(e);
   }
-  console.log(ar[0]);
-  return ar;
+  return ar[0];
 }
