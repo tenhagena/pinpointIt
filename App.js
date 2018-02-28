@@ -80,6 +80,7 @@ const SignedIn = TabNavigator(
     },
   },
   {
+    initialRouteName: 'GameMap',
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
   },
