@@ -27,6 +27,7 @@ async function GetAllDistances(latitude, longitude, uRad, locations) {
   for (const [index, value] of newData.rows[0].elements.entries()) {
     if (value.distance.value < uRad) {
       validLocs.push(locations[index]);
+      console.log(value.distance.value);
     }
   }
 

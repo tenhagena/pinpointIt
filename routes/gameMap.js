@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Button, Text } from 'react-native';
+import { StyleSheet, View, Button, Text, Alert } from 'react-native';
 import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
 import getLocation from '../components/getLocation';
@@ -42,9 +42,10 @@ export default class GameMap extends React.Component {
       coordinates: { latitude: 0, longitude: 0 },
     };
     this.state = { markers: [], umarker, region: this.region };
-    this.getLocations = this.getLocations.bind(this);
     this.onRegionChange = this.onRegionChange.bind(this);
     this.startGame = this.startGame.bind(this);
+    this.getLocationAsync = this.getLocationAsync.bind(this);
+    this.checkIn = this.checkIn.bind(this);
   }
 
   componentWillMount() {
@@ -76,27 +77,27 @@ export default class GameMap extends React.Component {
     );
   }
 
-  getLocations() {
-    const markerLocations = [];
-    firebase
-      .database()
-      .ref('/places/')
-      .once('value')
-      .then((snapshot) => {
-        /* snapshot.array.forEach((element) => {
-          markerLocations.push(element.val());
-        }); */
-        const placeName = snapshot.val();
-        Object.values(placeName).forEach((element) => {
-          markerLocations.push({
-            title: element.name,
-            coordinates: { latitude: element.location.lat, longitude: element.location.lng },
-          });
-        });
-        // console.log(markerLocations);
-        this.setState({ markers: markerLocations, region: this.region });
-      });
-  }
+  // getLocations() {
+  //   const markerLocations = [];
+  //   firebase
+  //     .database()
+  //     .ref('/places/')
+  //     .once('value')
+  //     .then((snapshot) => {
+  //       /* snapshot.array.forEach((element) => {
+  //         markerLocations.push(element.val());
+  //       }); */
+  //       const placeName = snapshot.val();
+  //       Object.values(placeName).forEach((element) => {
+  //         markerLocations.push({
+  //           title: element.name,
+  //           coordinates: { latitude: element.location.lat, longitude: element.location.lng },
+  //         });
+  //       });
+  //       // console.log(markerLocations);
+  //       this.setState({ markers: markerLocations, region: this.region });
+  //     });
+  // }
   startGame() {
     getLocation(this.state.umarker, 1000)
       .then((nextLoc) => {
@@ -156,6 +157,34 @@ export default class GameMap extends React.Component {
     }
   }
 
+  checkIn() {
+    function deg2rad(deg) {
+      return deg * (Math.PI / 180);
+    }
+    const R = 6371e3;
+    const lat1 = this.state.umarker.coordinates.latitude;
+    const long1 = this.state.umarker.coordinates.longitude;
+
+    const lat2 = this.state.nextLocation.coordinates.latitude;
+    const long2 = this.state.nextLocation.coordinates.longitude;
+
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(long2 - long1);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c;
+    if (d < 30) {
+      Alert.alert('WOOOOO', 'YOU FUCKING DID IT');
+    } else {
+      Alert.alert('Nope', `You need to move ${Math.floor(d - 30)} meters closer`);
+    }
+    this.setState({});
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -190,9 +219,9 @@ export default class GameMap extends React.Component {
             title={this.state.umarker.title}
           /> */}
         </MapView>
-        <Button title="Get Locations" onPress={this.getLocations} />
+        {/* <Button title="Get Locations" onPress={this.getLocations} /> */}
         {this.state.gameID != null ? (
-          <Text>Your current game ID: {this.state.gameID}</Text>
+          <Button title="Check In" onPress={this.checkIn} />
         ) : (
           <Button title="Start Game" onPress={this.startGame} />
         )}
