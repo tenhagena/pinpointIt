@@ -2,7 +2,8 @@ import React from 'react';
 import * as firebase from 'firebase';
 
 const MAPSAPI = 'https://maps.googleapis.com/maps/api/distancematrix/json?';
-const APIKEY = 'AIzaSyD2blk49vwxtYbL4h2TYrT_QlG_5UnwIKM';
+// const APIKEY = 'AIzaSyD2blk49vwxtYbL4h2TYrT_QlG_5UnwIKM';
+const APIKEY = 'AIzaSyClpfBZjeGjVO_coCskzR0EUahyqJ2expI';
 
 async function getData(url) {
   const getUrl = await fetch(url);
@@ -12,21 +13,24 @@ async function getData(url) {
 
 async function GetAllDistances(latitude, longitude, uRad, locations) {
   const validLocs = [];
+  let url = `${MAPSAPI}origins=${latitude},${longitude}&destinations=`;
   for (const element of locations) {
-    const url = `${MAPSAPI}origins=${latitude},${longitude}&destinations=${
-      element.coordinates.latitude
-    },${element.coordinates.longitude}&${APIKEY}&mode=walking`;
-    let newData;
-    try {
-      newData = await getData(url);
-    } catch (e) {
-      console.log(e);
-    }
-    const len = Object(Object(newData.rows[0]).elements[0]).distance.value;
-    if (len < uRad) {
-      validLocs.push(element);
+    url += `${element.coordinates.latitude},${element.coordinates.longitude}|`;
+  }
+  url += `&${APIKEY}&mode=walking`;
+  let newData;
+  try {
+    newData = await getData(url);
+  } catch (e) {
+    console.log(e);
+  }
+  for (const [index, value] of newData.rows[0].elements.entries()) {
+    console.log(value);
+    if (value.distance.value < uRad) {
+      validLocs.push(locations[index]);
     }
   }
+
   return validLocs;
 }
 
