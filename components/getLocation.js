@@ -6,22 +6,28 @@ const APIKEY = 'AIzaSyD2blk49vwxtYbL4h2TYrT_QlG_5UnwIKM';
 
 async function getData(url) {
   const getUrl = await fetch(url);
-  return getUrl.json(); // parses response to JSON
+  const json = await getUrl.json();
+  return json; // parses response to JSON
 }
 
-function GetAllDistances(latitude, longitude, uRad, locations) {
+async function GetAllDistances(latitude, longitude, uRad, locations) {
   const validLocs = [];
-  locations.forEach((element) => {
+  for (const element of locations) {
     const url = `${MAPSAPI}origins=${latitude},${longitude}&destinations=${
       element.coordinates.latitude
     },${element.coordinates.longitude}&${APIKEY}&mode=walking`;
-    const newData = getData(url);
+    let newData;
+    try {
+      newData = await getData(url);
+    } catch (e) {
+      console.log(e);
+    }
     const len = Object(Object(newData.rows[0]).elements[0]).distance.value;
     if (len < uRad) {
       validLocs.push(element);
       console.log(element);
     }
-  });
+  }
   return locations;
 }
 
@@ -40,19 +46,21 @@ async function getAllLocations(latitude, longitude, uRad) {
     });
   });
   // calback(latitude, longitude, uRad, testlocations);
-  GetAllDistances(latitude, longitude, uRad, testlocations);
-  return testlocations;
+  return GetAllDistances(latitude, longitude, uRad, testlocations);
 }
 
-export default function getLocation(uPosition, uRad) {
+export default async function getLocation(uPosition, uRad) {
   const { latitude } = uPosition.coordinates;
   const { longitude } = uPosition.coordinates;
   const validLocs = [];
 
   console.log('THIS IS BEING CALLED');
-
-  const ar = getAllLocations(latitude, longitude, uRad);
+  let ar;
+  try {
+    ar = await getAllLocations(latitude, longitude, uRad);
+  } catch (e) {
+    console.log(e);
+  }
   console.log(ar[0]);
-
   return ar;
 }
