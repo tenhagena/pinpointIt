@@ -117,8 +117,7 @@ export default class GameMap extends React.Component {
       .update({
         started: true,
       });
-    getLocation(this.state.umarker, 100000).then((nextLoc) => {
-      console.log(nextLoc);
+    getLocation(this.state.umarker, 1000).then((nextLoc) => {
       this.setState({ nextLocation: nextLoc });
     });
   }

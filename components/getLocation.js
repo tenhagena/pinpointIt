@@ -25,7 +25,6 @@ async function GetAllDistances(latitude, longitude, uRad, locations) {
     console.log(e);
   }
   for (const [index, value] of newData.rows[0].elements.entries()) {
-    console.log(value);
     if (value.distance.value < uRad) {
       validLocs.push(locations[index]);
     }
@@ -57,7 +56,6 @@ export default async function getLocation(uPosition, uRad) {
   const { longitude } = uPosition.coordinates;
   const validLocs = [];
 
-  console.log('THIS IS BEING CALLED');
   let ar;
   try {
     ar = await getAllLocations(latitude, longitude, uRad);
