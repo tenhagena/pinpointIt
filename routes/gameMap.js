@@ -116,7 +116,7 @@ export default class GameMap extends React.Component {
       .update({
         started: true,
       });
-    getLocation(this.state.umarker, 1000).then((nextLoc) => {
+    getLocation(this.state.umarker, 100000).then((nextLoc) => {
       console.log(nextLoc);
       this.setState({ nextLocation: nextLoc });
     });
@@ -164,9 +164,7 @@ export default class GameMap extends React.Component {
               coordinate={this.state.nextLocation.coordinates}
               title={this.state.nextLocation.name}
             />
-          ) : (
-            <Text>No Next Location</Text>
-          )}
+          ) : null}
 
           {/* <MapView.Marker
             image={require('../assets/userLocation.png')}

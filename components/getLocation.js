@@ -60,5 +60,5 @@ export default async function getLocation(uPosition, uRad) {
   } catch (e) {
     console.log(e);
   }
-  return ar[0];
+  return ar[Math.floor(Math.random() * ar.length)];
 }
