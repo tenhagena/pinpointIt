@@ -41,11 +41,11 @@ export default class GameMap extends React.Component {
       title: 'You',
       coordinates: { latitude: 0, longitude: 0 },
     };
-    this.state = { markers: [], umarker, region: this.region };
     this.onRegionChange = this.onRegionChange.bind(this);
     this.startGame = this.startGame.bind(this);
     this.getLocationAsync = this.getLocationAsync.bind(this);
     this.checkIn = this.checkIn.bind(this);
+    this.state = { markers: [], umarker, region: this.region };
   }
 
   componentWillMount() {
@@ -101,7 +101,6 @@ export default class GameMap extends React.Component {
   startGame() {
     getLocation(this.state.umarker, 1000)
       .then((nextLoc) => {
-        console.log(nextLoc);
         this.setState({ nextLocation: nextLoc });
       })
       .then(() => {

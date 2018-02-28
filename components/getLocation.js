@@ -2,9 +2,7 @@ import React from 'react';
 import * as firebase from 'firebase';
 
 const MAPSAPI = 'https://maps.googleapis.com/maps/api/distancematrix/json?';
-// const APIKEY = 'AIzaSyD2blk49vwxtYbL4h2TYrT_QlG_5UnwIKM';
-const APIKEY = 'AIzaSyClpfBZjeGjVO_coCskzR0EUahyqJ2expI';
-
+const APIKEY = 'AIzaSyB4oIF2s36OGPr_LugqibsU7fIuQ1kpjfk';
 async function getData(url) {
   const getUrl = await fetch(url);
   const json = await getUrl.json();
@@ -17,17 +15,17 @@ async function GetAllDistances(latitude, longitude, uRad, locations) {
   for (const element of locations) {
     url += `${element.coordinates.latitude},${element.coordinates.longitude}|`;
   }
-  url += `&${APIKEY}&mode=walking`;
+  url = url.slice(0, -1);
+  url += `&key=${APIKEY}&mode=walking`;
   let newData;
   try {
     newData = await getData(url);
   } catch (e) {
     console.log(e);
   }
-  for (const [index, value] of newData.rows[0].elements.entries()) {
+  for (const [index, value] of Object(newData.rows[0].elements).entries()) {
     if (value.distance.value < uRad) {
       validLocs.push(locations[index]);
-      console.log(value.distance.value);
     }
   }
 
@@ -65,8 +63,9 @@ export default async function getLocation(uPosition, uRad) {
   let ar;
   try {
     ar = await getAllLocations(latitude, longitude, uRad);
+    return ar[Math.floor(Math.random() * ar.length)];
   } catch (e) {
     console.log(e);
+    return null;
   }
-  return ar[Math.floor(Math.random() * ar.length)];
 }
