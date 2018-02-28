@@ -2,11 +2,13 @@ import React from 'react';
 // import { AsyncStorage, Alert } from 'react-native';
 import * as firebase from 'firebase';
 import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 // Our main screens (routes)
 import Login from './routes/login';
 import GameMap from './routes/gameMap';
 import Progress from './routes/progress';
+import Settings from './routes/settings';
 
 /** ROUTES (maybe move to new file instead of keeping them here in the entrypoint?) */
 // Component: createRootNavigator - will determine if we're currently signed in or signed out
@@ -33,20 +35,47 @@ const determineNavType = (props) => {
 
 // Component: SignedIn
 // Route: GameMap - The game map
-// Route: TBD
-// Route: TBD
+// Route: Progress - The current game progress
+// Route: Settings - App and game settings
 const SignedIn = TabNavigator(
   {
-    GameMap: {
-      screen: GameMap,
-      navigationOptions: {
-        tabBarLabel: 'Map',
-      },
-    },
     Progress: {
       screen: Progress,
       navigationOptions: {
         tabBarLabel: 'Progress',
+        tabBarIcon: ({ focused }) => (
+          <Ionicons
+            name={focused ? 'ios-refresh-circle' : 'ios-refresh-circle-outline'}
+            size={26}
+            style={{ color: focused ? '#33A3F4' : '#949494' }}
+          />
+        ),
+      },
+    },
+    GameMap: {
+      screen: GameMap,
+      navigationOptions: {
+        tabBarLabel: 'Map',
+        tabBarIcon: ({ focused }) => (
+          <FontAwesome
+            name={focused ? 'map' : 'map-o'}
+            size={26}
+            style={{ color: focused ? '#33A3F4' : '#949494' }}
+          />
+        ),
+      },
+    },
+    Settings: {
+      screen: Settings,
+      navigationOptions: {
+        tabBarLabel: 'Settings',
+        tabBarIcon: ({ focused }) => (
+          <Ionicons
+            name={focused ? 'ios-settings' : 'ios-settings-outline'}
+            size={26}
+            style={{ color: focused ? '#33A3F4' : '#949494' }}
+          />
+        ),
       },
     },
   },

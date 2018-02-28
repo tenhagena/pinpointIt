@@ -58,7 +58,8 @@ export default class GameMap extends React.Component {
   onRegionChange(region) {
     this.setState({ region, umarker: this.umarker });
   }
-  getLocationAsync = async () => {
+
+  async getLocationAsync() {
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
       console.log(status);
@@ -73,7 +74,7 @@ export default class GameMap extends React.Component {
         this.umarker = element;
       },
     );
-  };
+  }
 
   getLocations() {
     const markerLocations = [];
