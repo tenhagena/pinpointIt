@@ -18,10 +18,22 @@ export default class Settings extends React.Component {
       title: 'Settings',
     };
 
+    componentWillMount() {
+      const user = firebase.auth().currentUser;
+
+      firebase
+        .database()
+        .ref(`/user/${user.uid}`)
+        .once('value')
+        .then((snapshot) => {
+          this.setState({ uRad: snapshot.val().uRad, difficulty: snapshot.val().difficulty });
+        });
+    }
+
     constructor(props) {
       super(props);
       this.state = {
-        minRadius: 500, maxRadius: 2000, radiusValue: 1000, difficulty: 'easy',
+        minRadius: 500, maxRadius: 2000, uRad: 1000, difficulty: 'easy',
       };
     }
 
@@ -51,14 +63,14 @@ export default class Settings extends React.Component {
       return (
         <View style={styles.container}>
           <View style={styles.container}>
-            <Text>How far are you willing to walk to the next location? </Text>
+            <Text>How far are you willing to walk to the next location?</Text>
             <Slider
-              value={this.state.radiusValue}
-              onSlidingComplete={(radiusValue) => {
-                  this.updateRadius(radiusValue);
+              value={this.state.uRad}
+              onSlidingComplete={(uRad) => {
+                  this.updateRadius(uRad);
               }}
-              onValueChange={radiusValue =>
-                  this.setState({ radiusValue })
+              onValueChange={uRad =>
+                  this.setState({ uRad })
               }
               minValue={this.state.minRadius}
               maximumValue={this.state.maxRadius}
@@ -68,7 +80,7 @@ export default class Settings extends React.Component {
             <Text style={{
                         fontSize: 16,
                     }}
-            >Radius: {this.state.radiusValue} m
+            >Radius: {this.state.uRad} m
             </Text>
           </View>
           <Divider />
