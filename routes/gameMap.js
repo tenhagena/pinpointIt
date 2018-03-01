@@ -3,6 +3,7 @@ import { StyleSheet, View, Button, Text, Alert } from 'react-native';
 import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
 import getLocation from '../components/getLocation';
+import ModalTest from '../components/newLocationModal';
 
 const styles = StyleSheet.create({
   container: {
@@ -41,11 +42,18 @@ export default class GameMap extends React.Component {
       title: 'You',
       coordinates: { latitude: 0, longitude: 0 },
     };
+
+    this.showModal = this.showModal.bind(this);
     this.onRegionChange = this.onRegionChange.bind(this);
     this.startGame = this.startGame.bind(this);
     this.getLocationAsync = this.getLocationAsync.bind(this);
     this.checkIn = this.checkIn.bind(this);
-    this.state = { markers: [], umarker, region: this.region };
+    this.state = {
+      markers: [],
+      umarker,
+      region: this.region,
+      modalState: false,
+    };
   }
 
   componentWillMount() {
@@ -184,6 +192,10 @@ export default class GameMap extends React.Component {
     this.setState({});
   }
 
+  showModal() {
+    this.setState({ modalState: true });
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -218,12 +230,13 @@ export default class GameMap extends React.Component {
             title={this.state.umarker.title}
           /> */}
         </MapView>
-        {/* <Button title="Get Locations" onPress={this.getLocations} /> */}
+        <Button title="Modal Test" onPress={this.showModal} />
         {this.state.gameID != null ? (
           <Button title="Check In" onPress={this.checkIn} />
         ) : (
           <Button title="Start Game" onPress={this.startGame} />
         )}
+        <ModalTest showState={this.state.modalState} />
       </View>
     );
   }
