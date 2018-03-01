@@ -7,8 +7,7 @@
     "react/prop-types": 0,
     "no-shadow": "off",
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
-    "react/prefer-stateless-function": "off",
-    "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"]
+    "react/prefer-stateless-function": "off"
   },
   "globals": {
     "fetch": false
