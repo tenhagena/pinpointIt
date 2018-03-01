@@ -104,6 +104,7 @@ const checkUser = (user) => {
             .ref(`/user/${user.uid}`)
             .update({
               HighScore: 0,
+              uRad: 1000,
             });
         }
       });
