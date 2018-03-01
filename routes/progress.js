@@ -18,10 +18,13 @@ export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { signedIn: true };
-    this.getGame();
     this.endGame = this.endGame.bind(this);
     this.getGame = this.getGame.bind(this);
     this.logOut = this.logOut.bind(this);
+  }
+
+  componentDidMount() {
+    this.getGame();
   }
 
   getGame() {
