@@ -63,7 +63,20 @@ export default class HomeScreen extends React.Component {
       <View style={styles.container}>
         <Text>Game Progress here</Text>
         {this.state.signedIn === true ? <Button title="Log Out" onPress={this.logOut} /> : <Text />}
-        {this.state.gameID != null ? <Button title="End Game" onPress={this.endGame} /> : <Text />}
+        {this.state.gameID != null ? (
+          <View
+            style={{
+              margin: 25,
+              backgroundColor: '#3a599a',
+              borderRadius: 5,
+              padding: 5,
+            }}
+          >
+            <Button title="End Game" onPress={this.endGame} color="#fff" />
+          </View>
+        ) : (
+          <Text />
+        )}
       </View>
     );
   }
