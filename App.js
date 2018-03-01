@@ -105,6 +105,7 @@ const checkUser = (user) => {
             .update({
               HighScore: 0,
               uRad: 1000,
+              difficulty: 'easy',
             });
         }
       });
