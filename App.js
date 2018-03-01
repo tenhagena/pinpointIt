@@ -17,9 +17,14 @@ import Settings from './routes/settings';
 
 // Component: SignedOut
 // Route: Login - The login page
-const SignedOut = StackNavigator({
-  Login: { screen: Login },
-});
+const SignedOut = StackNavigator(
+  {
+    Login: { screen: Login },
+  },
+  {
+    headerMode: 'none',
+  },
+);
 
 /* Per style guidelines, we're going to want to use a TabNavigator on iOS,
 ** and a DrawerNavigator on Android -- EDIT: maybe not
