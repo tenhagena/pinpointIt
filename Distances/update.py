@@ -1,7 +1,6 @@
 from Distances import grapher
 import sys
 import os
-import geopy
 import requests
 import pprint
 import json
@@ -23,11 +22,14 @@ for i in range(0, len(locs)):
             url = 'https://maps.googleapis.com/maps/api/directions/json?origin=place_id:' + \
                 str(place) + '&destination=place_id:' + str(place2) + \
                 '&key=AIzaSyD2blk49vwxtYbL4h2TYrT_QlG_5UnwIKM&mode=walking'
+
             responce = requests.get(url).json()
             dist = responce['routes'][0]['legs'][0]['distance']['text']
-            actual_distance = float(dist[:-3])
             if 'ft' in dist:
-                actual_distance = actual_distance / 5280
+                actual_distance = float(dist[:-3]) / 5280
+            else:
+                actual_distance = float(dist[:-3])
+            print(place, actual_distance, place2)
             data[place2] = round(actual_distance, 2)
     json_data = json.dumps(data)
     url_put = 'https://pinpointit-393d2.firebaseio.com/places/' + locs[i] + \
