@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    height: '85%',
+    height: '100%',
   },
 });
 
@@ -45,6 +45,7 @@ export default class GameMap extends React.Component {
     this.startGame = this.startGame.bind(this);
     this.getLocationAsync = this.getLocationAsync.bind(this);
     this.checkIn = this.checkIn.bind(this);
+    this.getURad = this.getURad.bind(this);
     this.state = { markers: [], umarker, region: this.region };
   }
 
@@ -54,22 +55,26 @@ export default class GameMap extends React.Component {
       region: this.region,
     });
     this.getLocationAsync();
+    this.getURad();
   }
 
   componentDidMount() {
+    this.getURad();
+  }
+
+  onRegionChange(region) {
+    this.setState({ region, umarker: this.umarker });
+  }
+
+  getURad() {
     const user = firebase.auth().currentUser;
     firebase
       .database()
       .ref(`/user/${user.uid}`)
       .once('value')
       .then((snapshot) => {
-        console.log(snapshot.val().uRad);
         this.setState({ uRad: snapshot.val().uRad });
       });
-  }
-
-  onRegionChange(region) {
-    this.setState({ region, umarker: this.umarker });
   }
 
   async getLocationAsync() {
@@ -111,6 +116,7 @@ export default class GameMap extends React.Component {
   //     });
   // }
   startGame() {
+    this.getURad();
     getLocation(this.state.umarker, this.state.uRad).then((nextLoc) => {
       if (nextLoc) {
         this.setState({ nextLocation: nextLoc });
@@ -236,9 +242,27 @@ export default class GameMap extends React.Component {
         </MapView>
         {/* <Button title="Get Locations" onPress={this.getLocations} /> */}
         {this.state.gameID != null ? (
-          <Button title="Check In" onPress={this.checkIn} />
+          <View
+            style={{
+              margin: 25,
+              backgroundColor: '#3a599a',
+              borderRadius: 5,
+              padding: 5,
+            }}
+          >
+            <Button title="Check In" onPress={this.checkIn} color="#fff" />
+          </View>
         ) : (
-          <Button title="Start Game" onPress={this.startGame} />
+          <View
+            style={{
+              margin: 25,
+              backgroundColor: '#3a599a',
+              borderRadius: 5,
+              padding: 5,
+            }}
+          >
+            <Button title="Start Game" onPress={this.startGame} color="#fff" />
+          </View>
         )}
       </View>
     );
