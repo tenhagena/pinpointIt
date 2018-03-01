@@ -58,12 +58,12 @@ async function getAllLocations(latitude, longitude, uRad) {
 export default async function getLocation(uPosition, uRad) {
   const { latitude } = uPosition.coordinates;
   const { longitude } = uPosition.coordinates;
-  const validLocs = [];
+  let validLocs = [];
+  console.log(uRad);
 
-  let ar;
   try {
-    ar = await getAllLocations(latitude, longitude, uRad);
-    return ar[Math.floor(Math.random() * ar.length)];
+    validLocs = await getAllLocations(latitude, longitude, uRad);
+    return validLocs[Math.floor(Math.random() * validLocs.length)];
   } catch (e) {
     console.log(e);
     return null;

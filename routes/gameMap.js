@@ -56,6 +56,18 @@ export default class GameMap extends React.Component {
     this.getLocationAsync();
   }
 
+  componentDidMount() {
+    const user = firebase.auth().currentUser;
+    firebase
+      .database()
+      .ref(`/user/${user.uid}`)
+      .once('value')
+      .then((snapshot) => {
+        console.log(snapshot.val().uRad);
+        this.setState({ uRad: snapshot.val().uRad });
+      });
+  }
+
   onRegionChange(region) {
     this.setState({ region, umarker: this.umarker });
   }
@@ -99,11 +111,9 @@ export default class GameMap extends React.Component {
   //     });
   // }
   startGame() {
-    getLocation(this.state.umarker, 1000)
-      .then((nextLoc) => {
+    getLocation(this.state.umarker, this.state.uRad).then((nextLoc) => {
+      if (nextLoc) {
         this.setState({ nextLocation: nextLoc });
-      })
-      .then(() => {
         const user = firebase.auth().currentUser;
         const { key } = firebase
           .database()
@@ -124,7 +134,13 @@ export default class GameMap extends React.Component {
             started: true,
             nextLoc: this.state.nextLocation,
           });
-      });
+      } else {
+        Alert.alert(
+          'No Locations Availible',
+          'Please move closer to the city, or extend your game difficulty',
+        );
+      }
+    });
   }
 
   currentGameId() {
