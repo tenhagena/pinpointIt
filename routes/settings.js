@@ -54,10 +54,12 @@ export default class Settings extends React.Component {
             <Text>How far are you willing to walk to the next location? </Text>
             <Slider
               value={this.state.radiusValue}
-              onValueChange={(radiusValue) => {
-                  this.setState({ radiusValue });
+              onSlidingComplete={(radiusValue) => {
                   this.updateRadius(radiusValue);
               }}
+              onValueChange={radiusValue =>
+                  this.setState({ radiusValue })
+              }
               minValue={this.state.minRadius}
               maximumValue={this.state.maxRadius}
               step={10}
