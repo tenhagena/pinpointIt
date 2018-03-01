@@ -13,9 +13,14 @@ const styles = StyleSheet.create({
     marginTop: '30%',
     marginBottom: 30,
   },
-  header: {
+  radiusHeader: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  difficultyHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingTop: 100,
   },
 });
 
@@ -80,7 +85,9 @@ export default class Settings extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.container}>
-          <Text style={styles.header}>How far are you willing to walk to the next location?</Text>
+          <Text style={styles.radiusHeader}>
+            How far are you willing to walk to the next location?
+          </Text>
           <Slider
             value={this.state.uRad}
             onSlidingComplete={(uRad) => {
@@ -110,7 +117,7 @@ export default class Settings extends React.Component {
             flex: 2,
           }}
         >
-          <Text style={styles.header}>Difficulty</Text>
+          <Text style={styles.difficultyHeader}>Difficulty</Text>
         </View>
         <View>
           <Picker
