@@ -45,6 +45,7 @@ export default class GameMap extends React.Component {
     this.startGame = this.startGame.bind(this);
     this.getLocationAsync = this.getLocationAsync.bind(this);
     this.checkIn = this.checkIn.bind(this);
+    this.getURad = this.getURad.bind(this);
     this.state = { markers: [], umarker, region: this.region };
   }
 
@@ -54,22 +55,26 @@ export default class GameMap extends React.Component {
       region: this.region,
     });
     this.getLocationAsync();
+    this.getURad();
   }
 
   componentDidMount() {
+    this.getURad();
+  }
+
+  onRegionChange(region) {
+    this.setState({ region, umarker: this.umarker });
+  }
+
+  getURad() {
     const user = firebase.auth().currentUser;
     firebase
       .database()
       .ref(`/user/${user.uid}`)
       .once('value')
       .then((snapshot) => {
-        console.log(snapshot.val().uRad);
         this.setState({ uRad: snapshot.val().uRad });
       });
-  }
-
-  onRegionChange(region) {
-    this.setState({ region, umarker: this.umarker });
   }
 
   async getLocationAsync() {
@@ -111,6 +116,7 @@ export default class GameMap extends React.Component {
   //     });
   // }
   startGame() {
+    this.getURad();
     getLocation(this.state.umarker, this.state.uRad).then((nextLoc) => {
       if (nextLoc) {
         this.setState({ nextLocation: nextLoc });
