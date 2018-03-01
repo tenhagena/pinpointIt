@@ -20,7 +20,6 @@ export default class HomeScreen extends React.Component {
     this.state = { signedIn: true };
     this.endGame = this.endGame.bind(this);
     this.getGame = this.getGame.bind(this);
-    this.logOut = this.logOut.bind(this);
   }
 
   componentDidMount() {
