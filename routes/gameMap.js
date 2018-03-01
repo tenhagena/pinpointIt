@@ -196,6 +196,10 @@ export default class GameMap extends React.Component {
     this.setState({ modalState: true });
   }
 
+  closeModal = () => {
+    this.setState({ modalState: false });
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -236,7 +240,7 @@ export default class GameMap extends React.Component {
         ) : (
           <Button title="Start Game" onPress={this.startGame} />
         )}
-        <ModalTest showState={this.state.modalState} />
+        <ModalTest closeModal={this.closeModal} showState={this.state.modalState} />
       </View>
     );
   }
