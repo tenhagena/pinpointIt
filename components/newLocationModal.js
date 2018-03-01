@@ -28,17 +28,13 @@ export default class ModalContent extends React.Component {
     this.setState({ showState: this.props.showState });
   }
 
-  closeModal = () => {
-    this.setState({ showState: false });
-  };
-
   render() {
     return (
       <Modal style={styles.modalContent} isVisible={this.state.showState}>
         <View style={{ flex: 1 }}>
           <Text>I am the modal content!</Text>
           <Button
-            onPress={this.closeModal}
+            onPress={this.props.closeModal}
             style={styles.login}
             buttonStyle={{
               backgroundColor: '#3a599a',
