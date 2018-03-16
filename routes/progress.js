@@ -20,7 +20,6 @@ export default class HomeScreen extends React.Component {
     this.state = { signedIn: true };
     this.endGame = this.endGame.bind(this);
     this.getGame = this.getGame.bind(this);
-    this.logOut = this.logOut.bind(this);
   }
 
   componentDidMount() {
@@ -49,21 +48,25 @@ export default class HomeScreen extends React.Component {
       });
     this.setState({ gameID: null });
   }
-  logOut() {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        console.log('SignedOut');
-      });
-    this.setState({ signedIn: false });
-  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text>Game Progress here</Text>
-        {this.state.signedIn === true ? <Button title="Log Out" onPress={this.logOut} /> : <Text />}
-        {this.state.gameID != null ? <Button title="End Game" onPress={this.endGame} /> : <Text />}
+        {this.state.gameID != null ? (
+          <View
+            style={{
+              margin: 25,
+              backgroundColor: '#3a599a',
+              borderRadius: 5,
+              padding: 5,
+            }}
+          >
+            <Button title="End Game" onPress={this.endGame} color="#fff" />
+          </View>
+        ) : (
+          <Text />
+        )}
       </View>
     );
   }
