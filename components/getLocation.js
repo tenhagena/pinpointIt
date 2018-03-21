@@ -1,4 +1,3 @@
-import React from 'react';
 import * as firebase from 'firebase';
 
 const MAPSAPI = 'https://maps.googleapis.com/maps/api/distancematrix/json?';
@@ -55,7 +54,7 @@ async function getAllLocations(latitude, longitude, uRad) {
   return GetAllDistances(latitude, longitude, uRad, testlocations);
 }
 
-export default async function getLocation(uPosition, uRad) {
+export default async function getLocation(uPosition, uRad, visited) {
   const { latitude } = uPosition.coordinates;
   const { longitude } = uPosition.coordinates;
   let validLocs = [];
@@ -63,6 +62,12 @@ export default async function getLocation(uPosition, uRad) {
 
   try {
     validLocs = await getAllLocations(latitude, longitude, uRad);
+    validLocs.forEach((value, i) => {
+      if (visited.includes(value.placeID)) {
+        validLocs.splice(i);
+      }
+    });
+    console.log(validLocs);
     return validLocs[Math.floor(Math.random() * validLocs.length)];
   } catch (e) {
     console.log(e);

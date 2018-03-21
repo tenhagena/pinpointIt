@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
-import { Button } from 'react-native-elements';
-import { FontAwesome } from '@expo/vector-icons';
+import { Text, Button } from 'react-native-elements';
+// import { FontAwesome } from '@expo/vector-icons';
 
 const styles = StyleSheet.create({
   modalContent: {
@@ -18,33 +18,24 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class ModalContent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { showState: false };
-  }
+const ModalContent = props =>
+  // const test = () => console.log('Test');
 
-  componentWillReceiveProps() {
-    this.setState({ showState: this.props.showState });
-  }
-
-  render() {
-    return (
-      <Modal style={styles.modalContent} isVisible={this.state.showState}>
-        <View style={{ flex: 1 }}>
-          <Text>I am the modal content!</Text>
-          <Button
-            onPress={this.props.closeModal}
-            style={styles.login}
-            buttonStyle={{
-              backgroundColor: '#3a599a',
-              width: 250,
-              height: 60,
-            }}
-            text="Lets Go!"
-          />
-        </View>
-      </Modal>
-    );
-  }
-}
+  (
+    <Modal style={styles.modalContent} isVisible={props.showState}>
+      <View style={{ flex: 1 }}>
+        <Text h2>{props.modalData}</Text>
+        <Button
+          onPress={props.closeModal()}
+          style={styles.login}
+          buttonStyle={{
+            backgroundColor: '#3a599a',
+            width: 250,
+            height: 60,
+          }}
+          text="Lets Go!"
+        />
+      </View>
+    </Modal>
+  );
+export default ModalContent;

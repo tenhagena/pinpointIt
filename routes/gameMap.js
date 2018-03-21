@@ -1,9 +1,16 @@
 import React from 'react';
-import { StyleSheet, View, Button, Text, Alert } from 'react-native';
+import { StyleSheet, View, Button, Alert } from 'react-native';
 import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import getLocation from '../components/getLocation';
 import ModalTest from '../components/newLocationModal';
+
+import { addCurrentLocationInfo } from '../actions/actions';
+// import { locale } from 'core-js/library/web/timers';
+
+const imageMapView = require('../assets/userLocation.png');
 
 const styles = StyleSheet.create({
   container: {
@@ -25,7 +32,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class GameMap extends React.Component {
+class GameMap extends React.Component {
   static navigationOptions = {
     title: 'Map',
     headerTintColor: 'blue',
@@ -49,11 +56,14 @@ export default class GameMap extends React.Component {
     this.getLocationAsync = this.getLocationAsync.bind(this);
     this.checkIn = this.checkIn.bind(this);
     this.getURad = this.getURad.bind(this);
+    this.continueLocation = this.continueLocation.bind(this);
+    this.updateVisitedList = this.updateVisitedList.bind(this);
     this.state = {
       markers: [],
       umarker,
       region: this.region,
       modalState: false,
+      visitedList: [],
     };
   }
 
@@ -125,7 +135,7 @@ export default class GameMap extends React.Component {
   // }
   startGame() {
     this.getURad();
-    getLocation(this.state.umarker, this.state.uRad).then((nextLoc) => {
+    getLocation(this.state.umarker, this.state.uRad, this.state.visitedList).then((nextLoc) => {
       if (nextLoc) {
         this.setState({ nextLocation: nextLoc });
         const user = firebase.auth().currentUser;
@@ -145,8 +155,37 @@ export default class GameMap extends React.Component {
           .ref('/game/')
           .child(key)
           .update({
-            started: true,
-            nextLoc: this.state.nextLocation,
+            visited: 0,
+            Score: 0,
+            1: this.state.nextLocation,
+            visitedList: [],
+          });
+      } else {
+        Alert.alert(
+          'No Locations Availible',
+          'Please move closer to the city, or extend your game difficulty',
+        );
+      }
+    });
+  }
+
+  continueLocation() {
+    this.getURad();
+    getLocation(this.state.umarker, this.state.uRad, this.state.visitedList).then((nextLoc) => {
+      if (nextLoc) {
+        this.setState({ nextLocation: nextLoc });
+        // const user = this.state.uid;
+        firebase
+          .database()
+          .ref(`/game/${this.state.gameID}`)
+          .once('value', (snapshot) => {
+            const visitedString = (snapshot.val().visited + 1).toString();
+            firebase
+              .database()
+              .ref(`/game/${this.state.gameID}`)
+              .update({
+                [visitedString]: nextLoc,
+              });
           });
       } else {
         Alert.alert(
@@ -175,8 +214,10 @@ export default class GameMap extends React.Component {
                 .ref(`/game/${newTest}`)
                 .on('value', (snapshot) => {
                   if (snapshot.val() != null) {
-                    if (snapshot.val().nextLoc != null) {
-                      this.setState({ nextLocation: snapshot.val().nextLoc });
+                    const place = snapshot.val().Visited;
+                    const stringPlace = (place + 1).toString();
+                    if (snapshot.child(stringPlace).val() != null) {
+                      this.setState({ nextLocation: snapshot.child(stringPlace).val() });
                     }
                   }
                 });
@@ -185,7 +226,27 @@ export default class GameMap extends React.Component {
         });
     }
   }
-
+  updateVisitedList(location) {
+    let visitedList = [];
+    let visited;
+    firebase
+      .database()
+      .ref(`game/${this.state.gameID}`)
+      .once('value', (snapshot) => {
+        ({ visited } = snapshot.val());
+        if (visited > 0) {
+          ({ visitedList } = snapshot.val());
+        }
+        visitedList.push(location);
+      })
+      .then(firebase
+        .database()
+        .ref(`game/${this.state.gameID}`)
+        .update({
+          visitedList,
+          visited: visited + 1,
+        }));
+  }
   checkIn() {
     function deg2rad(deg) {
       return deg * (Math.PI / 180);
@@ -206,8 +267,13 @@ export default class GameMap extends React.Component {
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
-    if (d < 30) {
+    if (d < 30000) {
       Alert.alert('WOOOOO', 'YOU FUCKING DID IT');
+      const { visitedList } = this.state;
+      visitedList.push(this.state.nextLocation.placeID);
+      this.setState(visitedList);
+      this.updateVisitedList(this.state.nextLocation.placeID);
+      this.setState({ nextLocation: null });
     } else {
       Alert.alert('Nope', `You need to move ${Math.floor(d - 30)} meters closer`);
     }
@@ -223,6 +289,11 @@ export default class GameMap extends React.Component {
   };
 
   render() {
+    // Dispatchers
+    const { currentLocationInfo } = this.props;
+    // State
+    const { addCurrentLocationInfo } = this.props;
+
     return (
       <View style={styles.container}>
         <MapView
@@ -242,7 +313,7 @@ export default class GameMap extends React.Component {
 
           {this.state.nextLocation != null ? (
             <MapView.Marker
-              image={require('../assets/userLocation.png')}
+              image={imageMapView}
               key={this.state.nextLocation.name}
               coordinate={this.state.nextLocation.coordinates}
               title={this.state.nextLocation.name}
@@ -266,7 +337,11 @@ export default class GameMap extends React.Component {
               padding: 5,
             }}
           >
-            <Button title="Check In" onPress={this.checkIn} color="#fff" />
+            {this.state.nextLocation != null ? (
+              <Button title="Check In" onPress={this.checkIn} color="#fff" />
+            ) : (
+              <Button title="Continue" onPress={this.continueLocation} color="#fff" />
+            )}
           </View>
         ) : (
           <View
@@ -280,8 +355,20 @@ export default class GameMap extends React.Component {
             <Button title="Start Game" onPress={this.startGame} color="#fff" />
           </View>
         )}
-        <ModalTest closeModal={this.closeModal} showState={this.state.modalState} />
+        {/*<ModalTest
+          closeModal={this.closeModal}
+          showState={this.state.modalState}
+          modalData={this.state.nextLocation}
+        />*/}
       </View>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  currentLocationInfo: state.currentLocationInfo,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({ addCurrentLocationInfo }, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameMap);

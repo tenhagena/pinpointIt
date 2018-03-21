@@ -2,7 +2,9 @@ import React from 'react';
 // import { AsyncStorage, Alert } from 'react-native';
 import * as firebase from 'firebase';
 import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
+import { Provider } from 'react-redux';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import Store from './store';
 
 // Our main screens (routes)
 import Login from './routes/login';
@@ -146,9 +148,19 @@ export default class App extends React.Component {
   }
   render() {
     const { signedIn } = this.state;
+    const StoreInstance = Store();
+
     if (signedIn === true) {
-      return <SignedIn />;
+      return (
+        <Provider store={StoreInstance}>
+          <SignedIn />
+        </Provider>
+      );
     }
-    return <SignedOut />;
+    return (
+      <Provider store={StoreInstance}>
+        <SignedOut />
+      </Provider>
+    );
   }
 }

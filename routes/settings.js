@@ -5,12 +5,12 @@ import * as firebase from 'firebase';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0,
     backgroundColor: '#fff',
     alignItems: 'stretch',
     justifyContent: 'center',
     padding: 20,
-    marginTop: '30%',
+    marginTop: '20%',
     marginBottom: 30,
   },
   radiusHeader: {
