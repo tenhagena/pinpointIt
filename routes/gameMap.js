@@ -2,12 +2,8 @@ import React from 'react';
 import { StyleSheet, View, Button, Alert } from 'react-native';
 import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import getLocation from '../components/getLocation';
 import ModalTest from '../components/newLocationModal';
-
-import { addCurrentLocationInfo } from '../actions/actions';
 // import { locale } from 'core-js/library/web/timers';
 
 const imageMapView = require('../assets/userLocation.png');
@@ -32,7 +28,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class GameMap extends React.Component {
+export default class GameMap extends React.Component {
   static navigationOptions = {
     title: 'Map',
     headerTintColor: 'blue',
@@ -319,11 +315,6 @@ class GameMap extends React.Component {
   };
 
   render() {
-    // Dispatchers
-    const { currentLocationInfo } = this.props;
-    // State
-    const { addCurrentLocationInfo } = this.props;
-
     return (
       <View style={styles.container}>
         <MapView
@@ -394,11 +385,3 @@ class GameMap extends React.Component {
     );
   }
 }
-
-const mapStateToProps = state => ({
-  currentLocationInfo: state.currentLocationInfo,
-});
-
-const mapDispatchToProps = dispatch => bindActionCreators({ addCurrentLocationInfo }, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(GameMap);
