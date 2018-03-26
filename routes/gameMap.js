@@ -294,7 +294,7 @@ export default class GameMap extends React.Component {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
 
-    if (d < 30000) {
+    if (d < 30) {
       const timediff = date.getTime() - this.state.nextLocation.startTime;
       Alert.alert('WOOOOO', `You made it in ${timediff / 1000} seconds`);
       this.updateEndTime(date.getTime());
