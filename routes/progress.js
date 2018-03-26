@@ -1,10 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
+import { List, ListItem } from 'react-native-elements';
 import * as firebase from 'firebase';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
@@ -50,9 +51,26 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
+    const list = [
+      {
+        name: 'Amy Farha',
+        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+        subtitle: 'Vice President',
+      },
+      {
+        name: 'Chris Jackson',
+        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+        subtitle: 'Vice Chairman',
+      },
+    ];
+
     return (
       <View style={styles.container}>
-        <Text>Game Progress here</Text>
+        <List containerStyle={{ marginBottom: 20, marginTop: 30 }}>
+          {list.map((l, i) => (
+            <ListItem roundAvatar avatar={{ uri: l.avatar_url }} key={i} title={l.name} />
+          ))}
+        </List>
         {this.state.gameID != null ? (
           <View
             style={{
