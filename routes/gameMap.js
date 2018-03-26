@@ -135,8 +135,10 @@ class GameMap extends React.Component {
   // }
   startGame() {
     this.getURad();
+    const date = new Date();
     getLocation(this.state.umarker, this.state.uRad, this.state.visitedList).then((nextLoc) => {
       if (nextLoc) {
+        nextLoc.startTime = date.getTime();
         this.setState({ nextLocation: nextLoc });
         const user = firebase.auth().currentUser;
         const { key } = firebase
@@ -171,8 +173,10 @@ class GameMap extends React.Component {
 
   continueLocation() {
     this.getURad();
+    const date = new Date();
     getLocation(this.state.umarker, this.state.uRad, this.state.visitedList).then((nextLoc) => {
       if (nextLoc) {
+        nextLoc.startTime = date.getTime();
         this.setState({ nextLocation: nextLoc });
         // const user = this.state.uid;
         firebase
@@ -208,13 +212,19 @@ class GameMap extends React.Component {
           if (snapshot.val() != null) {
             newTest = snapshot.val().game;
             this.setState({ gameID: newTest });
+            if (newTest == null) {
+              this.setState({ nextLocation: null, visitedList: [] });
+            }
             if (newTest) {
               firebase
                 .database()
                 .ref(`/game/${newTest}`)
                 .on('value', (snapshot) => {
                   if (snapshot.val() != null) {
-                    const place = snapshot.val().Visited;
+                    if (snapshot.val().visited > 0) {
+                      this.setState({ visitedList: snapshot.val().visitedList });
+                    }
+                    const place = snapshot.val().visited;
                     const stringPlace = (place + 1).toString();
                     if (snapshot.child(stringPlace).val() != null) {
                       this.setState({ nextLocation: snapshot.child(stringPlace).val() });
@@ -247,7 +257,27 @@ class GameMap extends React.Component {
           visited: visited + 1,
         }));
   }
+
+  updateEndTime(time) {
+    let place;
+    let visitedString;
+    firebase
+      .database()
+      .ref(`game/${this.state.gameID}`)
+      .once('value', (snapshot) => {
+        place = snapshot.child(snapshot.val().visited + 1).val();
+        place.endTime = time;
+        visitedString = (snapshot.val().visited + 1).toString();
+      })
+      .then(firebase
+        .database()
+        .ref(`game/${this.state.gameID}`)
+        .update({
+          [visitedString]: place,
+        }));
+  }
   checkIn() {
+    const date = new Date();
     function deg2rad(deg) {
       return deg * (Math.PI / 180);
     }
@@ -267,11 +297,11 @@ class GameMap extends React.Component {
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
+
     if (d < 30000) {
-      Alert.alert('WOOOOO', 'YOU FUCKING DID IT');
-      const { visitedList } = this.state;
-      visitedList.push(this.state.nextLocation.placeID);
-      this.setState(visitedList);
+      const timediff = date.getTime() - this.state.nextLocation.startTime;
+      Alert.alert('WOOOOO', `You made it in ${timediff / 1000} seconds`);
+      this.updateEndTime(date.getTime());
       this.updateVisitedList(this.state.nextLocation.placeID);
       this.setState({ nextLocation: null });
     } else {
@@ -355,11 +385,11 @@ class GameMap extends React.Component {
             <Button title="Start Game" onPress={this.startGame} color="#fff" />
           </View>
         )}
-        {/*<ModalTest
+        {/* <ModalTest
           closeModal={this.closeModal}
           showState={this.state.modalState}
           modalData={this.state.nextLocation}
-        />*/}
+        /> */}
       </View>
     );
   }
