@@ -156,17 +156,12 @@ export default class Settings extends React.Component {
             padding: 5,
           }}
         >
-        <Picker>
-          <Picker.Item label="Easy" value="easy" />
-          <Picker.Item label="Medium" value="medium" />
-          <Picker.Item label="Hard" value="hard" />
-        </Picker>
-        <Button title="Log Out" onPress={this.logOut} />
-        {Platform.OS === 'ios' ?
-          <Button title="Log Out" onPress={this.logOut} color="#fff" />
-                :
-          <Button title="Log Out" onPress={this.logOut} color="#3a599a" />
-            }
+          {Platform.OS === 'ios' ? (
+            <Button title="Log Out" onPress={this.logOut} color="#fff" />
+          ) : (
+            <Button title="Log Out" onPress={this.logOut} color="#3a599a" />
+          )}
+        </View>
       </View>
     );
   }

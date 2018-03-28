@@ -4,10 +4,6 @@ import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
 import getLocation from '../components/getLocation';
 import getDirections from '../components/getDirections';
-import { StyleSheet, View, Button, Alert } from 'react-native';
-import { MapView, Permissions, Location } from 'expo';
-import * as firebase from 'firebase';
-import getLocation from '../components/getLocation';
 import ModalTest from '../components/newLocationModal';
 // import { locale } from 'core-js/library/web/timers';
 
@@ -328,7 +324,7 @@ export default class GameMap extends React.Component {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
 
-    if (d < 30) {
+    if (d < 3000) {
       const timediff = date.getTime() - this.state.nextLocation.startTime;
       Alert.alert('WOOOOO', `You made it in ${timediff / 1000} seconds`);
       this.updateEndTime(date.getTime());
@@ -399,7 +395,7 @@ export default class GameMap extends React.Component {
             />
           ) : null}
 
-          {this.state.umarker != null && this.state.gameID == null && this.state.uRad != null ? (
+          {this.state.umarker != null && this.state.nextLocation == null && this.state.uRad != null ? (
             <MapView.Circle
               center={this.state.umarker.coordinates}
               radius={this.state.uRad}
