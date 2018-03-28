@@ -225,7 +225,7 @@ export default class GameMap extends React.Component {
             newTest = snapshot.val().game;
             this.setState({ gameID: newTest });
             if (newTest == null) {
-              this.setState({ nextLocation: null, visitedList: [] });
+              this.setState({ nextLocation: null, visitedList: [], coords: null });
             }
             if (newTest) {
               firebase
