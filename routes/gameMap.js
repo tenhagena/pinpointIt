@@ -4,6 +4,12 @@ import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
 import getLocation from '../components/getLocation';
 import getDirections from '../components/getDirections';
+import { StyleSheet, View, Button, Alert } from 'react-native';
+import { MapView, Permissions, Location } from 'expo';
+import * as firebase from 'firebase';
+import getLocation from '../components/getLocation';
+import ModalTest from '../components/newLocationModal';
+// import { locale } from 'core-js/library/web/timers';
 
 const imageMapView = require('../assets/userLocation.png');
 
@@ -53,7 +59,6 @@ export default class GameMap extends React.Component {
     this.getURad = this.getURad.bind(this);
     this.continueLocation = this.continueLocation.bind(this);
     this.updateVisitedList = this.updateVisitedList.bind(this);
-
     this.state = {
       markers: [],
       umarker,
@@ -323,7 +328,7 @@ export default class GameMap extends React.Component {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
 
-    if (d < 3000) {
+    if (d < 30) {
       const timediff = date.getTime() - this.state.nextLocation.startTime;
       Alert.alert('WOOOOO', `You made it in ${timediff / 1000} seconds`);
       this.updateEndTime(date.getTime());
