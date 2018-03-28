@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
 export default class GameMap extends React.Component {
   static navigationOptions = {
     title: 'Map',
@@ -163,7 +162,8 @@ export default class GameMap extends React.Component {
           .then((coordsArray) => {
             this.setState({ coords: coordsArray });
             console.log(this.state.coords);
-          }).catch((e) => {
+          })
+          .catch((e) => {
             console.log(e);
           });
       } else {
@@ -200,7 +200,8 @@ export default class GameMap extends React.Component {
           .then((coordsArray) => {
             this.setState({ coords: coordsArray });
             console.log(this.state.coords);
-          }).catch((e) => {
+          })
+          .catch((e) => {
             console.log(e);
           });
       } else {
@@ -240,14 +241,18 @@ export default class GameMap extends React.Component {
                     const stringPlace = (place + 1).toString();
                     if (snapshot.child(stringPlace).val() != null) {
                       this.setState({ nextLocation: snapshot.child(stringPlace).val() });
+                      getDirections(
+                        this.state.umarker.coordinates,
+                        this.state.nextLocation.coordinates,
+                      )
+                        .then((coordsArray) => {
+                          this.setState({ coords: coordsArray });
+                          console.log(this.state.coords);
+                        })
+                        .catch((e) => {
+                          console.log(e);
+                        });
                     }
-                    getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
-                      .then((coordsArray) => {
-                        this.setState({ coords: coordsArray });
-                        console.log(this.state.coords);
-                      }).catch((e) => {
-                        console.log(e);
-                      });
                   }
                 });
             }
@@ -275,6 +280,7 @@ export default class GameMap extends React.Component {
           visitedList,
           visited: visited + 1,
         }));
+    this.setState({ coords: null });
   }
 
   updateEndTime(time) {
@@ -317,7 +323,7 @@ export default class GameMap extends React.Component {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
 
-    if (d < 40) {
+    if (d < 3000) {
       const timediff = date.getTime() - this.state.nextLocation.startTime;
       Alert.alert('WOOOOO', `You made it in ${timediff / 1000} seconds`);
       this.updateEndTime(date.getTime());
@@ -375,12 +381,9 @@ export default class GameMap extends React.Component {
             coordinate={this.state.umarker.coordinates}
             title={this.state.umarker.title}
           /> */}
-          {this.state.coords != null ?
-            <MapView.Polyline
-              coordinates={this.state.coords}
-              strokeWidth={3}
-              strokeColor="blue"
-            /> : null}
+          {(this.state.coords != null) && (this.state.nextLocation != null) ? (
+            <MapView.Polyline coordinates={this.state.coords} strokeWidth={3} strokeColor="blue" />
+          ) : null}
 
           {this.state.nextLocation != null ? (
             <MapView.Circle
@@ -388,7 +391,8 @@ export default class GameMap extends React.Component {
               radius={40}
               fillColor="rgba(107,184,107, 0.35)"
               strokeColor="rgba107,184,107, 0.35)"
-            />) : null }
+            />
+          ) : null}
 
           {this.state.umarker != null && this.state.gameID == null && this.state.uRad != null ? (
             <MapView.Circle
@@ -396,8 +400,8 @@ export default class GameMap extends React.Component {
               radius={this.state.uRad}
               fillColor="rgba(0,0,0, 0.2)"
               strokeColor="rgba(0, 0, 0, 0.2)"
-            />) : null }
-
+            />
+          ) : null}
         </MapView>
 
         {/* {this.state.directionsState === true && this.state.coords != null ? (
@@ -454,12 +458,7 @@ export default class GameMap extends React.Component {
               padding: 5,
             }}
           >
-            <Button
-              title="Start Game"
-              onPress={this.startGame}
-              color={this.getColor()}
-            />
-
+            <Button title="Start Game" onPress={this.startGame} color={this.getColor()} />
           </View>
         )}
         {/* <ModalTest
