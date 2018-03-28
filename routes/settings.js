@@ -1,6 +1,6 @@
 import React from 'react';
-import { Picker, StyleSheet, Text, View } from 'react-native';
-import { Divider, Slider, Button } from 'react-native-elements';
+import { Picker, StyleSheet, Text, View, Button, Platform } from 'react-native';
+import { Divider, Slider } from 'react-native-elements';
 import * as firebase from 'firebase';
 
 const styles = StyleSheet.create({
@@ -140,6 +140,11 @@ export default class Settings extends React.Component {
           <Picker.Item label="Hard" value="hard" />
         </Picker>
         <Button title="Log Out" onPress={this.logOut} />
+        {Platform.OS === 'ios' ?
+          <Button title="Log Out" onPress={this.logOut} color="#fff" />
+                :
+          <Button title="Log Out" onPress={this.logOut} color="#3a599a" />
+            }
       </View>
     );
   }

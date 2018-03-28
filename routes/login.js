@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { SocialIcon } from 'react-native-elements';
-
 import loginFacebook from '../components/loginHelper';
 
 const styles = StyleSheet.create({
