@@ -439,7 +439,7 @@ export default class GameMap extends React.Component {
             <MapView.Polyline
               coordinates={this.state.coords}
               strokeWidth={3}
-              strokeColor="blue"
+              strokeColor="#3a599a"
             /> : null}
 
           {this.state.nextLocation != null ? (
@@ -447,7 +447,7 @@ export default class GameMap extends React.Component {
               center={this.state.nextLocation.coordinates}
               radius={40}
               fillColor="rgba(107,184,107, 0.35)"
-              strokeColor="rgba107,184,107, 0.35)"
+              strokeColor="rgba(0,0,0, 0.4)"
             />) : null }
 
           {this.state.umarker != null && this.state.nextLocation == null && this.state.uRad != null ? (
