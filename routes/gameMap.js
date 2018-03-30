@@ -4,6 +4,8 @@ import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
 import getLocation from '../components/getLocation';
 import getDirections from '../components/getDirections';
+import ModalTest from '../components/newLocationModal';
+// import { locale } from 'core-js/library/web/timers';
 
 const imageMapView = require('../assets/userLocation.png');
 
@@ -53,6 +55,7 @@ export default class GameMap extends React.Component {
     this.checkIn = this.checkIn.bind(this);
     this.getURad = this.getURad.bind(this);
     this.continueLocation = this.continueLocation.bind(this);
+
     this.updateVisitedList = this.updateVisitedList.bind(this);
     this.getCurrentScore = this.getCurrentScore.bind(this);
     this.getDifficulty = this.getDifficulty.bind(this);
@@ -447,7 +450,7 @@ export default class GameMap extends React.Component {
               strokeColor="rgba107,184,107, 0.35)"
             />) : null }
 
-          {this.state.umarker != null && this.state.gameID == null && this.state.uRad != null ? (
+          {this.state.umarker != null && this.state.nextLocation == null && this.state.uRad != null ? (
             <MapView.Circle
               center={this.state.umarker.coordinates}
               radius={this.state.uRad}
