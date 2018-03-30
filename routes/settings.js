@@ -5,11 +5,22 @@ import * as firebase from 'firebase';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0,
     backgroundColor: '#fff',
     alignItems: 'stretch',
     justifyContent: 'center',
     padding: 20,
+    marginTop: '20%',
+    marginBottom: 30,
+  },
+  radiusHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  difficultyHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingTop: 100,
   },
 });
 
@@ -74,7 +85,9 @@ export default class Settings extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.container}>
-          <Text>How far are you willing to walk to the next location?</Text>
+          <Text style={styles.radiusHeader}>
+            How far are you willing to walk to the next location?
+          </Text>
           <Slider
             value={this.state.uRad}
             onSlidingComplete={(uRad) => {
@@ -100,51 +113,55 @@ export default class Settings extends React.Component {
             backgroundColor: '#fff',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 20,
+            padding: 5,
+            flex: 2,
           }}
         >
-          <Text
-            style={{
-              fontSize: 16,
+          <Text style={styles.difficultyHeader}>Difficulty</Text>
+        </View>
+        <View>
+          <Picker
+            selectedValue={this.state.difficulty}
+            onValueChange={(itemValue) => {
+              // switch (itemValue) {
+              //     case 'easy':
+              //         this.state.minRadius = 500;
+              //         this.state.maxRadius = 2000;
+              //         break;
+              //     case 'medium':
+              //         this.state.minRadius = 1000;
+              //         this.state.maxRadius = 3500;
+              //         break;
+              //     case 'hard':
+              //         this.state.minRadius = 2000;
+              //         this.state.maxRadius = 5000;
+              //         break;
+              //     default:
+              //         break;
+              // }
+              this.updateDifficulty(itemValue);
+              this.setState({ difficulty: itemValue });
             }}
           >
-            {' '}
-            Difficulty
-          </Text>
+            <Picker.Item label="Easy" value="easy" />
+            <Picker.Item label="Medium" value="medium" />
+            <Picker.Item label="Hard" value="hard" />
+          </Picker>
         </View>
-        <Picker
-          selectedValue={this.state.difficulty}
-          onValueChange={(itemValue) => {
-            // switch (itemValue) {
-            //     case 'easy':
-            //         this.state.minRadius = 500;
-            //         this.state.maxRadius = 2000;
-            //         break;
-            //     case 'medium':
-            //         this.state.minRadius = 1000;
-            //         this.state.maxRadius = 3500;
-            //         break;
-            //     case 'hard':
-            //         this.state.minRadius = 2000;
-            //         this.state.maxRadius = 5000;
-            //         break;
-            //     default:
-            //         break;
-            // }
-            this.updateDifficulty(itemValue);
-            this.setState({ difficulty: itemValue });
+        <View
+          style={{
+            margin: 25,
+            backgroundColor: '#3a599a',
+            borderRadius: 5,
+            padding: 5,
           }}
         >
-          <Picker.Item label="Easy" value="easy" />
-          <Picker.Item label="Medium" value="medium" />
-          <Picker.Item label="Hard" value="hard" />
-        </Picker>
-        <Button title="Log Out" onPress={this.logOut} />
-        {Platform.OS === 'ios' ?
-          <Button title="Log Out" onPress={this.logOut} color="#fff" />
-                :
-          <Button title="Log Out" onPress={this.logOut} color="#3a599a" />
-            }
+          {Platform.OS === 'ios' ? (
+            <Button title="Log Out" onPress={this.logOut} color="#fff" />
+          ) : (
+            <Button title="Log Out" onPress={this.logOut} color="#3a599a" />
+          )}
+        </View>
       </View>
     );
   }

@@ -23,7 +23,6 @@ export default async function getDirections(userLocation, nextLocation) {
     latitude: point[0],
     longitude: point[1],
   }));
-  console.log(coords);
 
   return coords;
 }
