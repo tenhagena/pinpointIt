@@ -454,7 +454,7 @@ export default class GameMap extends React.Component {
             <MapView.Circle
               center={this.state.umarker.coordinates}
               radius={this.state.uRad}
-              fillColor="rgba(0,0,0, 0.2)"
+              fillColor="rgba(194,24,7, 0.25)"
               strokeColor="rgba(0, 0, 0, 0.2)"
             />) : null }
 
@@ -471,7 +471,7 @@ export default class GameMap extends React.Component {
                   borderRadius: 5,
                       }}
           >
-            <Text style={{ color: '#ffffff' }}>
+            <Text style={{ color: '#ffffff', fontSize: 16 }}>
                     Score: {this.state.score}
             </Text>
           </View>

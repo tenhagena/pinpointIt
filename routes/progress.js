@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, Platform } from 'react-native';
-import { List, ListItem } from 'react-native-elements';
+import { Card, List, ListItem } from 'react-native-elements';
 import * as firebase from 'firebase';
 
 const styles = StyleSheet.create({
@@ -19,13 +19,18 @@ export default class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { signedIn: true };
+    this.state = { signedIn: true, visitedList: null, placesList: null };
     this.endGame = this.endGame.bind(this);
+    this.getGameID = this.getGameID.bind(this);
     this.getGame = this.getGame.bind(this);
+    this.getPlace = this.getPlace.bind(this);
+    this.getPlaces = this.getPlaces.bind(this);
   }
 
   componentDidMount() {
+    this.getGameID();
     this.getGame();
+    this.getPlaces();
   }
 
   getColor() {
@@ -34,6 +39,44 @@ export default class HomeScreen extends React.Component {
   }
 
   getGame() {
+    firebase
+      .database()
+      .ref('game/-L8rlX3SF8QJeKrX0b8j')
+      .once('value', (snapshot) => {
+        if (snapshot.child('visitedList').exists()) {
+          const visitedList = snapshot.val().visitedList;
+          this.setState({ visitedList });
+        }
+        const currentScore = snapshot.val().Score;
+        this.setState({ currentScore });
+      }).then(() => {
+        this.getPlaces();
+      });
+  }
+
+  getPlace(placeID) {
+    let object = {};
+
+    firebase
+      .database()
+      .ref(`places/${placeID}`)
+      .once('value', (snapshot) => {
+        object = { name: snapshot.val().name, image: snapshot.val().image };
+        return object;
+      });
+    return object;
+  }
+
+  getPlaces() {
+    const placesList = [];
+    for (const i in this.state.visitedList) {
+      const placeObj = this.getPlace(this.state.visitedList[i]);
+      placesList.push(placeObj);
+    }
+    this.setState({ placesList });
+  }
+
+  getGameID() {
     const user = firebase.auth().currentUser.uid;
     firebase
       .database()
@@ -45,6 +88,7 @@ export default class HomeScreen extends React.Component {
         }
       });
   }
+
   endGame() {
     const user = firebase.auth().currentUser;
     firebase
@@ -56,27 +100,26 @@ export default class HomeScreen extends React.Component {
     this.setState({ gameID: null });
   }
 
-  render() {
-    const list = [
-      {
-        name: 'Amy Farha',
-        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-        subtitle: 'Vice President',
-      },
-      {
-        name: 'Chris Jackson',
-        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-        subtitle: 'Vice Chairman',
-      },
-    ];
+  createList() {
+    if (this.state.placesList == null || this.state.placesList === undefined) {
+      return null;
+    }
+    return (<List containerStyle={{ marginBottom: 20, marginTop: 30 }}>
+      {this.state.placesList.map((l, i) => (
+        <Card
+          key={i}
+          title={this.state.placesList[i].name}
+        />
+            ))}
+    </List>);
+  }
 
+  render() {
     return (
       <View style={styles.container}>
-        <List containerStyle={{ marginBottom: 20, marginTop: 30 }}>
-          {list.map((l, i) => (
-            <ListItem roundAvatar avatar={{ uri: l.avatar_url }} key={i} title={l.name} />
-          ))}
-        </List>
+        {this.state.visitedList != null && this.state.placesList != null ?
+          this.createList() : null
+          }
         {this.state.gameID != null ? (
           <View
             style={{
