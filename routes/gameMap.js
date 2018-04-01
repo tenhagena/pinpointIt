@@ -8,6 +8,7 @@ import ModalTest from '../components/newLocationModal';
 // import { locale } from 'core-js/library/web/timers';
 
 const imageMapView = require('../assets/userLocation.png');
+const CHECKINDIST = 40;
 
 const styles = StyleSheet.create({
   container: {
@@ -319,7 +320,7 @@ export default class GameMap extends React.Component {
     const date = new Date();
     const d = this.getDistance();
 
-    if (d < 40) {
+    if (d < CHECKINDIST) {
       let timeDiff = date.getTime() - this.state.nextLocation.startTime;
       timeDiff /= 1000;
 
@@ -334,7 +335,7 @@ export default class GameMap extends React.Component {
 
       this.addScore();
     } else {
-      Alert.alert('Nope', `You need to move ${Math.floor(d - 30)} meters closer`);
+      Alert.alert('Nope', `You need to move ${Math.floor(d - CHECKINDIST)} meters closer`);
     }
     this.setState({});
   }
@@ -445,7 +446,7 @@ export default class GameMap extends React.Component {
           {this.state.nextLocation != null ? (
             <MapView.Circle
               center={this.state.nextLocation.coordinates}
-              radius={40}
+              radius={CHECKINDIST}
               fillColor="rgba(107,184,107, 0.35)"
               strokeColor="rgba(0,0,0, 0.4)"
             />) : null }
@@ -488,7 +489,7 @@ export default class GameMap extends React.Component {
               padding: 5,
             }}
           >
-            {this.state.nextLocation != null && this.getDistance() < 40 ? (
+            {this.state.nextLocation != null && this.getDistance() < CHECKINDIST ? (
               <Button title="Check In" onPress={this.checkIn} color={this.getColor()} />
             ) : (
               null
