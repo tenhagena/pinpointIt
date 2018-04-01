@@ -8,7 +8,7 @@ import ModalTest from '../components/newLocationModal';
 // import { locale } from 'core-js/library/web/timers';
 
 const imageMapView = require('../assets/userLocation.png');
-const CHECKINDIST = 40;
+const CHECKINDIST = 4000;
 
 const styles = StyleSheet.create({
   container: {

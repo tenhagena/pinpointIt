@@ -24,13 +24,10 @@ export default class HomeScreen extends React.Component {
     this.getGameID = this.getGameID.bind(this);
     this.getGame = this.getGame.bind(this);
     this.getPlace = this.getPlace.bind(this);
-    this.getPlaces = this.getPlaces.bind(this);
   }
 
   componentDidMount() {
     this.getGameID();
-    this.getGame();
-    this.getPlaces();
   }
 
   getColor() {
@@ -41,7 +38,7 @@ export default class HomeScreen extends React.Component {
   getGame() {
     firebase
       .database()
-      .ref('game/-L8rlX3SF8QJeKrX0b8j')
+      .ref(`game/${this.state.gameID}`)
       .once('value', (snapshot) => {
         if (snapshot.child('visitedList').exists()) {
           const visitedList = snapshot.val().visitedList;
@@ -49,31 +46,35 @@ export default class HomeScreen extends React.Component {
         }
         const currentScore = snapshot.val().Score;
         this.setState({ currentScore });
-      }).then(() => {
+      })
+      .then(() => {
         this.getPlaces();
       });
   }
 
-  getPlace(placeID) {
-    let object = {};
+  async getPlace(placeID) {
+    let object = { real: 'blah' };
 
-    firebase
+    await firebase
       .database()
       .ref(`places/${placeID}`)
       .once('value', (snapshot) => {
         object = { name: snapshot.val().name, image: snapshot.val().image };
         return object;
-      });
+      })
+      .then(object => object);
     return object;
   }
 
   getPlaces() {
     const placesList = [];
     for (const i in this.state.visitedList) {
-      const placeObj = this.getPlace(this.state.visitedList[i]);
-      placesList.push(placeObj);
+      this.getPlace(this.state.visitedList[i]).then((object) => {
+        placesList.push(object);
+        console.log(object);
+        this.setState({ placesList });
+      });
     }
-    this.setState({ placesList });
   }
 
   getGameID() {
@@ -81,12 +82,13 @@ export default class HomeScreen extends React.Component {
     firebase
       .database()
       .ref(`/user/${user}`)
-      .on('value', (snapshot) => {
+      .once('value', (snapshot) => {
         if (snapshot.val() != null) {
           const newTest = snapshot.val().game;
           this.setState({ gameID: newTest });
         }
-      });
+      })
+      .then(() => this.getGame());
   }
 
   endGame() {
@@ -104,22 +106,18 @@ export default class HomeScreen extends React.Component {
     if (this.state.placesList == null || this.state.placesList === undefined) {
       return null;
     }
-    return (<List containerStyle={{ marginBottom: 20, marginTop: 30 }}>
-      {this.state.placesList.map((l, i) => (
-        <Card
-          key={i}
-          title={this.state.placesList[i].name}
-        />
-            ))}
-    </List>);
+    console.log(this.state.placesList);
+    return (
+      <List containerStyle={{ marginBottom: 20, marginTop: 30 }}>
+        {this.state.placesList.map((l, i) => <Card key={i} title={l.name} />)}
+      </List>
+    );
   }
 
   render() {
     return (
       <View style={styles.container}>
-        {this.state.visitedList != null && this.state.placesList != null ?
-          this.createList() : null
-          }
+        {this.state.visitedList != null && this.state.placesList != null ? this.createList() : null}
         {this.state.gameID != null ? (
           <View
             style={{
