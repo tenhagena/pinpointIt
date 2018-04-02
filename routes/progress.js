@@ -144,7 +144,7 @@ export default class HomeScreen extends React.Component {
       <View style={styles.container}>
         {this.state.gameID != null ? (
           <View style={styles.score}>
-            <Text style={{ color: '#FFFFFF', fontSize: 16 }}>Score: {this.state.currentScore}</Text>
+            <Text style={{ color: '#FFFFFF' }}>Score: {this.state.currentScore}</Text>
           </View>
         ) : (
           <Text style={styles.startGame}>Start a game to access progress</Text>
