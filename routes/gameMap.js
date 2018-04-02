@@ -10,7 +10,7 @@ import ModalTest from '../components/newLocationModal';
 
 const imageMapView = require('../assets/userLocation.png');
 
-const CHECKINDIST = 4000;
+const CHECKINDIST = 40;
 
 const styles = StyleSheet.create({
   container: {
@@ -293,15 +293,15 @@ export default class GameMap extends React.Component {
                     if (newlocation != null) {
                       this.setState({ nextLocation: newlocation });
                     }
-                    if (this.state.umarker != null &&
-                        this.state.nextLocation != null) {
+                    if (this.state.umarker != null && this.state.nextLocation != null) {
                       getDirections(
                         this.state.umarker.coordinates,
                         this.state.nextLocation.coordinates,
                       )
                         .then((coordsArray) => {
                           this.setState({ coords: coordsArray });
-                        }).catch((e) => {
+                        })
+                        .catch((e) => {
                           console.log(e);
                         });
                     }
@@ -340,7 +340,8 @@ export default class GameMap extends React.Component {
         getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
           .then((coordsArray) => {
             this.setState({ coords: coordsArray });
-          }).catch((e) => {
+          })
+          .catch((e) => {
             console.log(e);
           });
         this.setState({ distanceToNextLocation: this.getDistance() });
@@ -385,7 +386,8 @@ export default class GameMap extends React.Component {
         getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
           .then((coordsArray) => {
             this.setState({ coords: coordsArray });
-          }).catch((e) => {
+          })
+          .catch((e) => {
             console.log(e);
           });
         this.setState({ distanceToNextLocation: parseFloat(this.getDistance()).toFixed(0) });
@@ -490,36 +492,33 @@ export default class GameMap extends React.Component {
         ) : null}
 
         {this.state.gameID != null ? (
-          <View style={{ flexDirection: 'row', marginLeft: '25%' }}>
-            <View
-              style={{
-                margin: 25,
-                backgroundColor: '#3a599a',
-                borderRadius: 5,
-                padding: 5,
-              }}
-            >
-              {this.state.nextLocation != null && this.getDistance() < CHECKINDIST ? (
-                <React.Fragment>
-                  <Button title="Check In" onPress={this.checkIn} color={getColor()} />
-                </React.Fragment>
-              ) : null}
+          <View
+            style={{
+              margin: 25,
+              backgroundColor: '#3a599a',
+              borderRadius: 5,
+              padding: 5,
+            }}
+          >
+            {this.state.nextLocation != null && this.getDistance() <= CHECKINDIST ? (
+              <React.Fragment>
+                <Button title="Check In" onPress={this.checkIn} color={getColor()} />
+              </React.Fragment>
+            ) : null}
 
-              {this.state.nextLocation == null ? (
-                <Button title="Continue" onPress={this.continueLocation} color={getColor()} />
-              ) : null}
-            </View>
-            <View style={{ marginLeft: '10%', marginBottom: 15, alignSelf: 'flex-end' }}>
-              {this.state.nextLocation != null && this.getDistance() < CHECKINDIST ? (
-                <Icon
-                  raised
-                  reverse
-                  name="directions-run"
-                  color="#3a599a"
-                  onPress={this.showModal}
+            {this.state.nextLocation != null && this.getDistance() > CHECKINDIST ? (
+              <React.Fragment>
+                <Button
+                  title={`Distance Remaining: \n${Math.round(this.getDistance())} m`}
+                  onPress={() => {}}
+                  color={getColor()}
                 />
-              ) : null}
-            </View>
+              </React.Fragment>
+            ) : null}
+
+            {this.state.nextLocation == null ? (
+              <Button title="Continue" onPress={this.continueLocation} color={getColor()} />
+            ) : null}
           </View>
         ) : (
           <View
@@ -532,6 +531,15 @@ export default class GameMap extends React.Component {
           >
             <Button title="Start Game" onPress={this.startGame} color={getColor()} />
           </View>
+        )}
+        {this.state.gameID != null ? (
+          <View style={{ position: 'absolute', left: 300, bottom: 16 }}>
+            {this.state.nextLocation != null ? (
+              <Icon raised reverse name="directions-run" color="#3a599a" onPress={this.showModal} />
+            ) : null}
+          </View>
+        ) : (
+          <Text />
         )}
         <ModalTest
           closeModal={this.closeModal}
