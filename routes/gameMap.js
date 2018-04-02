@@ -163,7 +163,9 @@ export default class GameMap extends React.Component {
   }
 
   showModal() {
-    this.setState({ modalState: true });
+    if (this.state.nextLocation) {
+      this.setState({ modalState: true });
+    }
   }
 
   closeModal = () => {

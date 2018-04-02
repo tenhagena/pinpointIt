@@ -46,7 +46,7 @@ class App extends Component {
     firebase
       .database()
       .ref(`game/${gameID}`)
-      .once('value', (snapshot) => {
+      .on('value', (snapshot) => {
         if (snapshot.val()) {
           this.setState({ places: snapshot.val().places, score: snapshot.val().Score });
         }
