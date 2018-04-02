@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, Image, Dimensions, Platform } from 'react-native';
 import Modal from 'react-native-modal';
 import { Text, Button } from 'react-native-elements';
 // import { FontAwesome } from '@expo/vector-icons';
@@ -7,6 +7,11 @@ import { Text, Button } from 'react-native-elements';
 const ModalContent = (props) => {
   const deviceHeight = Dimensions.get('window').height;
   const deviceWidth = Dimensions.get('window').width;
+
+  const getMarginTop = () => {
+    const margin = Platform.OS === 'ios' ? deviceHeight / 4 : deviceHeight / 6;
+    return margin;
+  };
 
   const styles = StyleSheet.create({
     modalContent: {
@@ -16,10 +21,11 @@ const ModalContent = (props) => {
       alignItems: 'center',
       borderRadius: 32,
       borderColor: 'rgba(0, 0, 0, 0.1)',
-      marginTop: deviceHeight / 4,
+      marginTop: getMarginTop(),
       marginBottom: deviceHeight / 4,
     },
   });
+
 
   const ModalData = () => {
     if (
