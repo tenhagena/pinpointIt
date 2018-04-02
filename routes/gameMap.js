@@ -148,6 +148,19 @@ export default class GameMap extends React.Component {
     return d;
   }
 
+  showModal() {
+    this.setState({ modalState: true });
+  }
+
+  closeModal = () => {
+    this.setState({ modalState: false });
+  };
+
+  getColor() {
+    const color = Platform.OS === 'ios' ? '#fff' : '#3a599a';
+    return color;
+  }
+
   getScoreToAdd() {
     if (this.state.difficulty === 'easy') {
       // return 100;
@@ -185,14 +198,6 @@ export default class GameMap extends React.Component {
       });
   }
 
-  showModal() {
-    this.setState({ modalState: true });
-  }
-
-  closeModal = () => {
-    this.setState({ modalState: false });
-  };
-
   checkIn() {
     const date = new Date();
     const d = this.getDistance();
@@ -208,13 +213,33 @@ export default class GameMap extends React.Component {
       Alert.alert('WOOOOO', `You made it in ${timeDiff} seconds`);
       this.updateEndTime(date.getTime());
       this.updateVisitedList(this.state.nextLocation.placeID);
-      this.setState({ nextLocation: null });
+      this.setState({ nextLocation: null, coords: null });
 
       this.addScore();
     } else {
       Alert.alert('Nope', `You need to move ${Math.floor(d - CHECKINDIST)} meters closer`);
     }
-    this.setState({});
+  }
+
+  updateEndTime(time) {
+    let place;
+    let places;
+    firebase
+      .database()
+      .ref(`game/${this.state.gameID}`)
+      .once('value', (snapshot) => {
+        ({ places } = snapshot.val());
+        const index = snapshot.val().visited;
+        place = snapshot.val().places[index];
+        place.endTime = time;
+        places[index] = place;
+      })
+      .then(firebase
+        .database()
+        .ref(`game/${this.state.gameID}`)
+        .update({
+          places,
+        }));
   }
 
   updateVisitedList(location) {
@@ -239,24 +264,6 @@ export default class GameMap extends React.Component {
         }));
   }
 
-  updateEndTime(time) {
-    let place;
-    let visitedString;
-    firebase
-      .database()
-      .ref(`game/${this.state.gameID}`)
-      .once('value', (snapshot) => {
-        place = snapshot.child(snapshot.val().visited + 1).val();
-        place.endTime = time;
-        visitedString = (snapshot.val().visited + 1).toString();
-      })
-      .then(firebase
-        .database()
-        .ref(`game/${this.state.gameID}`)
-        .update({
-          [visitedString]: place,
-        }));
-  }
   currentGameId() {
     // Check if we're in a game
     let newTest;
@@ -282,19 +289,19 @@ export default class GameMap extends React.Component {
                       this.setState({ visitedList: snapshot.val().visitedList });
                     }
                     const place = snapshot.val().visited;
-                    const stringPlace = (place + 1).toString();
-                    if (snapshot.child(stringPlace).val() != null) {
-                      this.setState({ nextLocation: snapshot.child(stringPlace).val() });
+                    const newlocation = snapshot.val().places[place + 1];
+                    if (newlocation != null) {
+                      this.setState({ nextLocation: newlocation });
                     }
-                    if (this.state.umarker != null && this.state.nextLocation != null) {
+                    if (this.state.umarker != null &&
+                        this.state.nextLocation != null) {
                       getDirections(
                         this.state.umarker.coordinates,
                         this.state.nextLocation.coordinates,
                       )
                         .then((coordsArray) => {
                           this.setState({ coords: coordsArray });
-                        })
-                        .catch((e) => {
+                        }).catch((e) => {
                           console.log(e);
                         });
                     }
@@ -314,25 +321,26 @@ export default class GameMap extends React.Component {
     getLocation(this.state.umarker, this.state.uRad, this.state.visitedList).then((nextLoc) => {
       if (nextLoc) {
         nextLoc.startTime = date.getTime();
+        let places;
         this.setState({ nextLocation: nextLoc });
         // const user = this.state.uid;
         firebase
           .database()
           .ref(`/game/${this.state.gameID}`)
           .once('value', (snapshot) => {
-            const visitedString = (snapshot.val().visited + 1).toString();
+            ({ places } = snapshot.val());
+            places.push(nextLoc);
             firebase
               .database()
               .ref(`/game/${this.state.gameID}`)
               .update({
-                [visitedString]: nextLoc,
+                places,
               });
           });
         getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
           .then((coordsArray) => {
             this.setState({ coords: coordsArray });
-          })
-          .catch((e) => {
+          }).catch((e) => {
             console.log(e);
           });
         this.setState({ distanceToNextLocation: this.getDistance() });
@@ -352,7 +360,6 @@ export default class GameMap extends React.Component {
       if (nextLoc) {
         nextLoc.startTime = date.getTime();
         this.setState({ nextLocation: nextLoc });
-        console.log(this.state.nextLocation.image);
         const user = firebase.auth().currentUser;
         const { key } = firebase
           .database()
@@ -372,14 +379,13 @@ export default class GameMap extends React.Component {
           .update({
             visited: 0,
             Score: 0,
-            1: this.state.nextLocation,
+            places: [this.state.nextLocation],
             visitedList: [],
           });
         getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
           .then((coordsArray) => {
             this.setState({ coords: coordsArray });
-          })
-          .catch((e) => {
+          }).catch((e) => {
             console.log(e);
           });
         this.setState({ distanceToNextLocation: parseFloat(this.getDistance()).toFixed(0) });
@@ -439,7 +445,7 @@ export default class GameMap extends React.Component {
             coordinate={this.state.umarker.coordinates}
             title={this.state.umarker.title}
           /> */}
-          {this.state.coords != null ? (
+          {this.state.coords != null && this.state.nextLocation != null ?
             <MapView.Polyline
               coordinates={this.state.coords}
               strokeWidth={3}
