@@ -289,9 +289,11 @@ export default class GameMap extends React.Component {
                       this.setState({ visitedList: snapshot.val().visitedList });
                     }
                     const place = snapshot.val().visited;
-                    const newlocation = snapshot.val().places[place + 1];
-                    if (newlocation != null) {
+                    const newlocation = snapshot.val().places[place];
+                    if (newlocation != null || newlocation !== undefined) {
                       this.setState({ nextLocation: newlocation });
+                    } else {
+                      this.setState({ nextLocation: null });
                     }
                     if (this.state.umarker != null && this.state.nextLocation != null) {
                       getDirections(
