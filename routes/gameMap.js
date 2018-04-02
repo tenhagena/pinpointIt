@@ -96,7 +96,7 @@ export default class GameMap extends React.Component {
 
   onRegionChange(region) {
     this.setState({ region, umarker: this.umarker });
-    if (this.userCounter > 25) {
+    if (this.userCounter > 25 && this.state.newlocation) {
       this.userCounter = 0;
       this.getDirections(this.umarker.coordinates, this.state.nextLocation.coordinates)
         .then((coordsArray) => {
@@ -131,7 +131,9 @@ export default class GameMap extends React.Component {
           coordinates: { latitude: location.coords.latitude, longitude: location.coords.longitude },
         };
         this.umarker = element;
-        this.userCounter += 1;
+        if (this.state.nextLocation) {
+          this.userCounter += 1;
+        }
       },
     );
   }
