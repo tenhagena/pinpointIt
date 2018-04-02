@@ -4,6 +4,7 @@
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
     "@mapbox/polyline": "^0.2.0",
+    "core-js": "^2.5.4",
     "expo": "^25.0.0",
     "firebase": "^4.12.0",
     "react": "^16.2.0",

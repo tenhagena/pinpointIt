@@ -1,4 +1,6 @@
 import * as firebase from 'firebase';
+import 'core-js/es6/symbol';
+import 'core-js/fn/symbol/iterator';
 
 const MAPSAPI = 'https://maps.googleapis.com/maps/api/distancematrix/json?';
 const APIKEY = 'AIzaSyB4oIF2s36OGPr_LugqibsU7fIuQ1kpjfk';
