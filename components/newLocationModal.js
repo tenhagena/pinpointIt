@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 32,
     borderColor: 'rgba(0, 0, 0, 0.1)',
+    height: '50%',
   },
   login: {
     marginBottom: 'auto',
@@ -44,25 +45,27 @@ const ModalContent = (props) => {
 
   return (
     <Modal style={styles.modalContent} isVisible={props.showState}>
-      <View
-        style={{
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Text h4>Next Location</Text>
-        <ModalData />
-        <Button
-          onPress={props.closeModal}
-          style={styles.login}
-          buttonStyle={{
-            backgroundColor: '#3a599a',
-            width: 250,
-            height: 60,
-            marginTop: 400,
+      <View>
+        <View
+          style={{
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
-          text="Lets Go!"
-        />
+        >
+          <Text h4>Next Location</Text>
+          <ModalData />
+          <Button
+            onPress={props.closeModal}
+            style={styles.login}
+            buttonStyle={{
+              backgroundColor: '#3a599a',
+              width: 250,
+              height: 60,
+              marginTop: '30%',
+            }}
+            text="Lets Go!"
+          />
+        </View>
       </View>
     </Modal>
   );

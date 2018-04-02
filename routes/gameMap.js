@@ -533,7 +533,7 @@ export default class GameMap extends React.Component {
           </View>
         )}
         {this.state.gameID != null ? (
-          <View style={{ position: 'absolute', left: 300, bottom: 16 }}>
+          <View style={{ position: 'absolute', right: '2%', bottom: 16 }}>
             {this.state.nextLocation != null ? (
               <Icon raised reverse name="directions-run" color="#3a599a" onPress={this.showModal} />
             ) : null}
