@@ -52,12 +52,6 @@ const ModalContent = (props) => {
       >
         <Text h4>Next Location</Text>
         <ModalData />
-        <Image
-          source={{
-            uri:
-              'https://avatars1.githubusercontent.com/u/887510?s=400&u=9c8d06edaa47ec45b18807e8ed373f6a8a3532bb&v=4',
-          }}
-        />
         <Button
           onPress={props.closeModal}
           style={styles.login}

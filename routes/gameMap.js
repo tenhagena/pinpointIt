@@ -445,7 +445,7 @@ export default class GameMap extends React.Component {
             coordinate={this.state.umarker.coordinates}
             title={this.state.umarker.title}
           /> */}
-          {this.state.coords != null && this.state.nextLocation != null ?
+          {this.state.coords != null && this.state.nextLocation != null ? (
             <MapView.Polyline
               coordinates={this.state.coords}
               strokeWidth={3}
@@ -490,7 +490,7 @@ export default class GameMap extends React.Component {
         ) : null}
 
         {this.state.gameID != null ? (
-          <View style={{ marginLeft: 60, flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', marginLeft: '25%' }}>
             <View
               style={{
                 margin: 25,
@@ -509,7 +509,7 @@ export default class GameMap extends React.Component {
                 <Button title="Continue" onPress={this.continueLocation} color={getColor()} />
               ) : null}
             </View>
-            <View style={{ alignSelf: 'flex-end', justifyContent: 'center' }}>
+            <View style={{ marginLeft: '10%', marginBottom: 15, alignSelf: 'flex-end' }}>
               {this.state.nextLocation != null && this.getDistance() < CHECKINDIST ? (
                 <Icon
                   raised
