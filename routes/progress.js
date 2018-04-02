@@ -139,6 +139,8 @@ export default class HomeScreen extends React.Component {
     );
   }
 
+  shareGame() {}
+
   render() {
     return (
       <View style={styles.container}>
@@ -152,6 +154,7 @@ export default class HomeScreen extends React.Component {
         {this.state.gameID != null ? (
           <View style={styles.endButton}>
             <Button title="End Game" onPress={this.endGame} color={getColor()} />
+            <Button title="Share GAme" onPress={this.shareGame} color={getColor()} />
           </View>
         ) : null}
         <ScrollView style={styles.scroll}>
