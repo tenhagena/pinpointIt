@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Platform } from 'react-native';
+import { StyleSheet, Text, View, Button, Platform, Image, ScrollView } from 'react-native';
 import { Card, List } from 'react-native-elements';
 import * as firebase from 'firebase';
 
@@ -77,7 +77,6 @@ export default class HomeScreen extends React.Component {
     if (this.state.places == null) {
       return null;
     }
-    console.log(this.state.places[0]);
     return (
       <List containerStyle={{ marginBottom: 20, marginTop: 30 }}>
         {this.state.places.map((l) => {
@@ -90,6 +89,14 @@ export default class HomeScreen extends React.Component {
             <Card key={l.name} title={l.name}>
               <Text>Start Time: {sdate.toLocaleTimeString()}</Text>
               {l.endTime ? <Text>End Time: {edate.toLocaleTimeString()}</Text> : null}
+              <Image
+                source={{
+                  uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&key=AIzaSyB4oIF2s36OGPr_LugqibsU7fIuQ1kpjfk&photoreference=${
+                    l.image
+                  }`,
+                }}
+                style={{ width: 200, height: 200 }}
+              />
             </Card>
           );
         })}
@@ -101,11 +108,13 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
         {this.state.gameID != null ? (
-          <Text style={{ fontSize: 16, marginTop: 80 }}>Score: {this.state.currentScore}</Text>
+          <Text style={{ fontSize: 16, margin: 30 }}>Score: {this.state.currentScore}</Text>
         ) : (
-          <Text style={{ fontSize: 16, marginTop: 80 }}>Start a game to access progress</Text>
+          <Text style={{ fontSize: 16, margin: 80 }}>Start a game to access progress</Text>
         )}
-        {this.state.places != null ? this.createList() : null}
+        <ScrollView style={{ marginBottom: 50 }}>
+          {this.state.places != null ? this.createList() : null}
+        </ScrollView>
         {this.state.gameID != null ? (
           <View
             style={{
@@ -117,9 +126,7 @@ export default class HomeScreen extends React.Component {
           >
             <Button title="End Game" onPress={this.endGame} color={getColor()} />
           </View>
-        ) : (
-          <Text />
-        )}
+        ) : null}
       </View>
     );
   }
