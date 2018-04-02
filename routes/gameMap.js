@@ -164,13 +164,13 @@ export default class GameMap extends React.Component {
   getScoreToAdd() {
     if (this.state.difficulty === 'easy') {
       // return 100;
-      return 100;
+      return 300;
     } else if (this.state.difficulty === 'medium') {
       // return 100 + ((this.state.distanceToNextLocation / 1440) - this.state.timeDiffSeconds) / 10;
       return 200;
     } else if (this.state.difficulty === 'hard') {
       // return 100 + (((this.state.distanceToNextLocation / 1440) - this.state.timeDiffSeconds) / 15);
-      return 300;
+      return 100;
     }
     return 0;
   }
