@@ -77,10 +77,22 @@ export default class HomeScreen extends React.Component {
     if (this.state.places == null) {
       return null;
     }
-    // console.log(this.state.placesList);
+    console.log(this.state.places[0]);
     return (
       <List containerStyle={{ marginBottom: 20, marginTop: 30 }}>
-        {this.state.places.map(l => <Card key={l.name} title={l.name} />)}
+        {this.state.places.map((l) => {
+          const sdate = new Date(l.startTime);
+          let edate;
+          if (l.endTime) {
+            edate = new Date(l.endTime);
+          }
+          return (
+            <Card key={l.name} title={l.name}>
+              <Text>Start Time: {sdate.toLocaleTimeString()}</Text>
+              {l.endTime ? <Text>End Time: {edate.toLocaleTimeString()}</Text> : null}
+            </Card>
+          );
+        })}
       </List>
     );
   }
