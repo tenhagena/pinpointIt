@@ -45,7 +45,7 @@ export default class Settings extends React.Component {
     super(props);
     this.state = {
       minRadius: 500,
-      maxRadius: 2000,
+      maxRadius: 5000,
       uRad: 1000,
       difficulty: 'easy',
     };
