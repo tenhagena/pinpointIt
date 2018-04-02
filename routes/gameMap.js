@@ -54,6 +54,7 @@ export default class GameMap extends React.Component {
       title: 'You',
       coordinates: { latitude: 0, longitude: 0 },
     };
+    this.userCounter = 0;
 
     this.showModal = this.showModal.bind(this);
     this.onRegionChange = this.onRegionChange.bind(this);
@@ -95,6 +96,16 @@ export default class GameMap extends React.Component {
 
   onRegionChange(region) {
     this.setState({ region, umarker: this.umarker });
+    if (this.userCounter > 25) {
+      this.userCounter = 0;
+      this.getDirections(this.umarker.coordinates, this.state.nextLocation.coordinates)
+        .then((coordsArray) => {
+          this.setState({ coords: coordsArray });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
   }
 
   getURad() {
@@ -120,6 +131,7 @@ export default class GameMap extends React.Component {
           coordinates: { latitude: location.coords.latitude, longitude: location.coords.longitude },
         };
         this.umarker = element;
+        this.userCounter += 1;
       },
     );
   }
