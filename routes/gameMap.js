@@ -222,7 +222,7 @@ export default class GameMap extends React.Component {
 
       this.setState({ timeDiffSeconds: timeDiff });
 
-      Alert.alert('WOOOOO', `You made it in ${timeDiff} seconds`);
+      Alert.alert('Great Job!', `You made it in ${timeDiff} seconds`);
       this.updateEndTime(date.getTime());
       this.updateVisitedList(this.state.nextLocation.placeID);
       this.setState({ nextLocation: null, coords: null });
