@@ -17,20 +17,6 @@ const getColor = () => {
   return color;
 };
 
-const getPlace = async (placeID) => {
-  let object = { real: 'blah' };
-
-  await firebase
-    .database()
-    .ref(`places/${placeID}`)
-    .once('value', (snapshot) => {
-      object = { name: snapshot.val().name, image: snapshot.val().image };
-      return object;
-    })
-    .then(object => object);
-  return object;
-};
-
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Welcome',
@@ -41,53 +27,39 @@ export default class HomeScreen extends React.Component {
     this.state = { visitedList: null, placesList: null };
     this.endGame = this.endGame.bind(this);
     this.getGameID = this.getGameID.bind(this);
-    this.getGame = this.getGame.bind(this);
   }
 
   componentDidMount() {
     this.getGameID();
   }
 
-  getGame() {
-    firebase
-      .database()
-      .ref(`game/${this.state.gameID}`)
-      .once('value', (snapshot) => {
-        if (snapshot.child('visitedList').exists()) {
-          const { visitedList } = snapshot.val();
-          this.setState({ visitedList });
-        }
-        const currentScore = snapshot.val().Score;
-        this.setState({ currentScore });
-      })
-      .then(() => {
-        this.getPlaces();
-      });
-  }
-
-  getPlaces() {
-    const placesList = [];
-    for (const i in this.state.visitedList) {
-      getPlace(this.state.visitedList[i]).then((object) => {
-        placesList.push(object);
-        // console.log(object);
-        this.setState({ placesList });
-      });
-    }
-  }
-
   getGameID() {
     const user = firebase.auth().currentUser.uid;
-    firebase
-      .database()
-      .ref(`/user/${user}`)
-      .once('value', (snapshot) => {
-        if (snapshot.val() != null) {
-          const newTest = snapshot.val().game;
-          this.setState({ gameID: newTest });
-        }
-      })
-      .then(() => this.getGame());
+    let newTest;
+    if (user) {
+      firebase
+        .database()
+        .ref(`/user/${user}`)
+        .on('value', (snapshot) => {
+          if (snapshot.val() != null) {
+            newTest = snapshot.val().game;
+            this.setState({ gameID: newTest });
+            if (newTest) {
+              firebase
+                .database()
+                .ref(`/game/${newTest}`)
+                .on('value', (snapshot) => {
+                  if (snapshot.val() != null) {
+                    this.setState({
+                      currentScore: snapshot.val().Score,
+                      places: snapshot.val().places,
+                    });
+                  }
+                });
+            }
+          }
+        });
+    }
   }
 
   endGame() {
@@ -98,17 +70,17 @@ export default class HomeScreen extends React.Component {
       .update({
         game: null,
       });
-    this.setState({ gameID: null });
+    this.setState({ gameID: null, places: null });
   }
 
   createList() {
-    if (this.state.placesList == null || this.state.placesList === undefined) {
+    if (this.state.places == null) {
       return null;
     }
     // console.log(this.state.placesList);
     return (
       <List containerStyle={{ marginBottom: 20, marginTop: 30 }}>
-        {this.state.placesList.map(l => <Card key={l.name} title={l.name} />)}
+        {this.state.places.map(l => <Card key={l.name} title={l.name} />)}
       </List>
     );
   }
@@ -116,8 +88,12 @@ export default class HomeScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={{ marginTop: 30 }}>{this.state.currentScore}</Text>
-        {this.state.visitedList != null && this.state.placesList != null ? this.createList() : null}
+        {this.state.gameID != null ? (
+          <Text style={{ fontSize: 16, marginTop: 80 }}>Score: {this.state.currentScore}</Text>
+        ) : (
+          <Text style={{ fontSize: 16, marginTop: 80 }}>Start a game to access progress</Text>
+        )}
+        {this.state.places != null ? this.createList() : null}
         {this.state.gameID != null ? (
           <View
             style={{
