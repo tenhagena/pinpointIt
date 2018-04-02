@@ -10,6 +10,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  image: {
+    justifyContent: 'center',
+    width: 200,
+    height: 200,
+    margin: 10,
+  },
+  card: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  list: {
+    marginTop: 30,
+    marginBottom: 100,
+    width: '100%',
+    backgroundColor: 'white',
+  },
+  endButton: {
+    marginBottom: 10,
+    backgroundColor: '#3a599a',
+    borderRadius: 5,
+    padding: 5,
+  },
+  scroll: {
+    marginBottom: 0,
+    width: '100%',
+  },
+  score: {
+    fontSize: 16,
+    margin: 30,
+    color: '#FFFFFF',
+    padding: 5,
+    backgroundColor: '#3a599a',
+    borderRadius: 5,
+  },
+  startGame: { fontSize: 16, margin: 80 },
 });
 
 const getColor = () => {
@@ -78,7 +113,7 @@ export default class HomeScreen extends React.Component {
       return null;
     }
     return (
-      <List containerStyle={{ marginBottom: 20, marginTop: 30 }}>
+      <List containerStyle={styles.list}>
         {this.state.places.map((l) => {
           const sdate = new Date(l.startTime);
           let edate;
@@ -86,7 +121,7 @@ export default class HomeScreen extends React.Component {
             edate = new Date(l.endTime);
           }
           return (
-            <Card key={l.name} title={l.name}>
+            <Card key={l.name} title={l.name} wrapperStyle={styles.card}>
               <Text>Start Time: {sdate.toLocaleTimeString()}</Text>
               {l.endTime ? <Text>End Time: {edate.toLocaleTimeString()}</Text> : null}
               <Image
@@ -95,7 +130,7 @@ export default class HomeScreen extends React.Component {
                     l.image
                   }`,
                 }}
-                style={{ width: 200, height: 200 }}
+                style={styles.image}
               />
             </Card>
           );
@@ -108,25 +143,20 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
         {this.state.gameID != null ? (
-          <Text style={{ fontSize: 16, margin: 30 }}>Score: {this.state.currentScore}</Text>
+          <View style={styles.score}>
+            <Text style={{ color: '#FFFFFF', fontSize: 16 }}>Score: {this.state.currentScore}</Text>
+          </View>
         ) : (
-          <Text style={{ fontSize: 16, margin: 80 }}>Start a game to access progress</Text>
+          <Text style={styles.startGame}>Start a game to access progress</Text>
         )}
-        <ScrollView style={{ marginBottom: 50 }}>
-          {this.state.places != null ? this.createList() : null}
-        </ScrollView>
         {this.state.gameID != null ? (
-          <View
-            style={{
-              margin: 25,
-              backgroundColor: '#3a599a',
-              borderRadius: 5,
-              padding: 5,
-            }}
-          >
+          <View style={styles.endButton}>
             <Button title="End Game" onPress={this.endGame} color={getColor()} />
           </View>
         ) : null}
+        <ScrollView style={styles.scroll}>
+          {this.state.places != null ? this.createList() : null}
+        </ScrollView>
       </View>
     );
   }
