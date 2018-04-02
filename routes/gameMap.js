@@ -1,12 +1,16 @@
 import React from 'react';
-import { StyleSheet, View, Button, Alert } from 'react-native';
+import { StyleSheet, View, Button, Alert, Platform, Text } from 'react-native';
+import { Icon } from 'react-native-elements';
 import { MapView, Permissions, Location } from 'expo';
 import * as firebase from 'firebase';
 import getLocation from '../components/getLocation';
+import getDirections from '../components/getDirections';
 import ModalTest from '../components/newLocationModal';
 // import { locale } from 'core-js/library/web/timers';
 
 const imageMapView = require('../assets/userLocation.png');
+
+const CHECKINDIST = 40;
 
 const styles = StyleSheet.create({
   container: {
@@ -27,6 +31,11 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 });
+
+const getColor = () => {
+  const color = Platform.OS === 'ios' ? '#fff' : '#3a599a';
+  return color;
+};
 
 export default class GameMap extends React.Component {
   static navigationOptions = {
@@ -53,13 +62,21 @@ export default class GameMap extends React.Component {
     this.checkIn = this.checkIn.bind(this);
     this.getURad = this.getURad.bind(this);
     this.continueLocation = this.continueLocation.bind(this);
+
     this.updateVisitedList = this.updateVisitedList.bind(this);
+    this.getCurrentScore = this.getCurrentScore.bind(this);
+    this.getDifficulty = this.getDifficulty.bind(this);
+
     this.state = {
       markers: [],
       umarker,
       region: this.region,
       modalState: false,
       visitedList: [],
+      coords: [],
+      score: null,
+      difficulty: null,
+      timeDiffSeconds: 0,
     };
   }
 
@@ -85,8 +102,7 @@ export default class GameMap extends React.Component {
     firebase
       .database()
       .ref(`/user/${user.uid}`)
-      .once('value')
-      .then((snapshot) => {
+      .on('value', (snapshot) => {
         this.setState({ uRad: snapshot.val().uRad });
       });
   }
@@ -108,130 +124,124 @@ export default class GameMap extends React.Component {
     );
   }
 
-  // getLocations() {
-  //   const markerLocations = [];
-  //   firebase
-  //     .database()
-  //     .ref('/places/')
-  //     .once('value')
-  //     .then((snapshot) => {
-  //       /* snapshot.array.forEach((element) => {
-  //         markerLocations.push(element.val());
-  //       }); */
-  //       const placeName = snapshot.val();
-  //       Object.values(placeName).forEach((element) => {
-  //         markerLocations.push({
-  //           title: element.name,
-  //           coordinates: { latitude: element.location.lat, longitude: element.location.lng },
-  //         });
-  //       });
-  //       // console.log(markerLocations);
-  //       this.setState({ markers: markerLocations, region: this.region });
-  //     });
-  // }
-  startGame() {
-    this.getURad();
-    const date = new Date();
-    getLocation(this.state.umarker, this.state.uRad, this.state.visitedList).then((nextLoc) => {
-      if (nextLoc) {
-        nextLoc.startTime = date.getTime();
-        this.setState({ nextLocation: nextLoc });
-        const user = firebase.auth().currentUser;
-        const { key } = firebase
-          .database()
-          .ref(`user/${user.uid}`)
-          .child('game')
-          .push();
-        firebase
-          .database()
-          .ref(`user/${user.uid}`)
-          .update({
-            game: key,
-          });
-        firebase
-          .database()
-          .ref('/game/')
-          .child(key)
-          .update({
-            visited: 0,
-            Score: 0,
-            1: this.state.nextLocation,
-            visitedList: [],
-          });
-      } else {
-        Alert.alert(
-          'No Locations Availible',
-          'Please move closer to the city, or extend your game difficulty',
-        );
-      }
-    });
+  getDistance() {
+    function deg2rad(deg) {
+      return deg * (Math.PI / 180);
+    }
+    const R = 6371e3;
+    const lat1 = this.state.umarker.coordinates.latitude;
+    const long1 = this.state.umarker.coordinates.longitude;
+
+    const lat2 = this.state.nextLocation.coordinates.latitude;
+    const long2 = this.state.nextLocation.coordinates.longitude;
+
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(long2 - long1);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c;
+
+    return d;
   }
 
-  continueLocation() {
-    this.getURad();
-    const date = new Date();
-    getLocation(this.state.umarker, this.state.uRad, this.state.visitedList).then((nextLoc) => {
-      if (nextLoc) {
-        nextLoc.startTime = date.getTime();
-        this.setState({ nextLocation: nextLoc });
-        // const user = this.state.uid;
-        firebase
-          .database()
-          .ref(`/game/${this.state.gameID}`)
-          .once('value', (snapshot) => {
-            const visitedString = (snapshot.val().visited + 1).toString();
-            firebase
-              .database()
-              .ref(`/game/${this.state.gameID}`)
-              .update({
-                [visitedString]: nextLoc,
-              });
-          });
-      } else {
-        Alert.alert(
-          'No Locations Availible',
-          'Please move closer to the city, or extend your game difficulty',
-        );
-      }
-    });
+  showModal() {
+    this.setState({ modalState: true });
   }
 
-  currentGameId() {
-    // Check if we're in a game
-    let newTest;
-    const user = firebase.auth().currentUser.uid;
-    if (user) {
+  closeModal = () => {
+    this.setState({ modalState: false });
+  };
+
+  getColor() {
+    const color = Platform.OS === 'ios' ? '#fff' : '#3a599a';
+    return color;
+  }
+
+  getScoreToAdd() {
+    if (this.state.difficulty === 'easy') {
+      // return 100;
+      return 100;
+    } else if (this.state.difficulty === 'medium') {
+      // return 100 + ((this.state.distanceToNextLocation / 1440) - this.state.timeDiffSeconds) / 10;
+      return 200;
+    } else if (this.state.difficulty === 'hard') {
+      // return 100 + (((this.state.distanceToNextLocation / 1440) - this.state.timeDiffSeconds) / 15);
+      return 300;
+    }
+    return 0;
+  }
+
+  getCurrentScore() {
+    let score;
+    if (this.state.gameID != null) {
       firebase
         .database()
-        .ref(`/user/${user}`)
+        .ref(`game/${this.state.gameID}`)
         .on('value', (snapshot) => {
-          if (snapshot.val() != null) {
-            newTest = snapshot.val().game;
-            this.setState({ gameID: newTest });
-            if (newTest == null) {
-              this.setState({ nextLocation: null, visitedList: [] });
-            }
-            if (newTest) {
-              firebase
-                .database()
-                .ref(`/game/${newTest}`)
-                .on('value', (snapshot) => {
-                  if (snapshot.val() != null) {
-                    if (snapshot.val().visited > 0) {
-                      this.setState({ visitedList: snapshot.val().visitedList });
-                    }
-                    const place = snapshot.val().visited;
-                    const stringPlace = (place + 1).toString();
-                    if (snapshot.child(stringPlace).val() != null) {
-                      this.setState({ nextLocation: snapshot.child(stringPlace).val() });
-                    }
-                  }
-                });
-            }
-          }
+          score = snapshot.val().Score;
+          this.setState({ score });
         });
     }
   }
+
+  getDifficulty() {
+    const user = firebase.auth().currentUser;
+    firebase
+      .database()
+      .ref(`/user/${user.uid}`)
+      .on('value', (snapshot) => {
+        this.setState({ difficulty: snapshot.val().difficulty });
+      });
+  }
+
+  checkIn() {
+    const date = new Date();
+    const d = this.getDistance();
+
+    if (d < CHECKINDIST) {
+      let timeDiff = date.getTime() - this.state.nextLocation.startTime;
+      timeDiff /= 1000;
+
+      timeDiff = parseFloat(timeDiff.toString());
+
+      this.setState({ timeDiffSeconds: timeDiff });
+
+      Alert.alert('WOOOOO', `You made it in ${timeDiff} seconds`);
+      this.updateEndTime(date.getTime());
+      this.updateVisitedList(this.state.nextLocation.placeID);
+      this.setState({ nextLocation: null, coords: null });
+
+      this.addScore();
+    } else {
+      Alert.alert('Nope', `You need to move ${Math.floor(d - CHECKINDIST)} meters closer`);
+    }
+  }
+
+  updateEndTime(time) {
+    let place;
+    let places;
+    firebase
+      .database()
+      .ref(`game/${this.state.gameID}`)
+      .once('value', (snapshot) => {
+        ({ places } = snapshot.val());
+        const index = snapshot.val().visited;
+        place = snapshot.val().places[index];
+        place.endTime = time;
+        places[index] = place;
+      })
+      .then(firebase
+        .database()
+        .ref(`game/${this.state.gameID}`)
+        .update({
+          places,
+        }));
+  }
+
   updateVisitedList(location) {
     let visitedList = [];
     let visited;
@@ -254,65 +264,165 @@ export default class GameMap extends React.Component {
         }));
   }
 
-  updateEndTime(time) {
-    let place;
-    let visitedString;
+  currentGameId() {
+    // Check if we're in a game
+    let newTest;
+    const user = firebase.auth().currentUser.uid;
+    if (user) {
+      firebase
+        .database()
+        .ref(`/user/${user}`)
+        .on('value', (snapshot) => {
+          if (snapshot.val() != null) {
+            newTest = snapshot.val().game;
+            this.setState({ gameID: newTest });
+            if (newTest == null) {
+              this.setState({ nextLocation: null, visitedList: [], coords: null });
+            }
+            if (newTest) {
+              firebase
+                .database()
+                .ref(`/game/${newTest}`)
+                .on('value', (snapshot) => {
+                  if (snapshot.val() != null) {
+                    if (snapshot.val().visited > 0) {
+                      this.setState({ visitedList: snapshot.val().visitedList });
+                    }
+                    const place = snapshot.val().visited;
+                    const newlocation = snapshot.val().places[place];
+                    if (newlocation != null || newlocation !== undefined) {
+                      this.setState({ nextLocation: newlocation });
+                    } else {
+                      this.setState({ nextLocation: null });
+                    }
+                    if (this.state.umarker != null && this.state.nextLocation != null) {
+                      getDirections(
+                        this.state.umarker.coordinates,
+                        this.state.nextLocation.coordinates,
+                      )
+                        .then((coordsArray) => {
+                          this.setState({ coords: coordsArray });
+                        })
+                        .catch((e) => {
+                          console.log(e);
+                        });
+                    }
+                    this.getDifficulty();
+                    this.getCurrentScore();
+                  }
+                });
+            }
+          }
+        });
+    }
+  }
+
+  continueLocation() {
+    this.getURad();
+    const date = new Date();
+    getLocation(this.state.umarker, this.state.uRad, this.state.visitedList)
+      .then((nextLoc) => {
+        if (nextLoc) {
+          nextLoc.startTime = date.getTime();
+          let places;
+          this.setState({ nextLocation: nextLoc });
+          // const user = this.state.uid;
+          firebase
+            .database()
+            .ref(`/game/${this.state.gameID}`)
+            .once('value', (snapshot) => {
+              ({ places } = snapshot.val());
+              places.push(nextLoc);
+              firebase
+                .database()
+                .ref(`/game/${this.state.gameID}`)
+                .update({
+                  places,
+                });
+            });
+          getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
+            .then((coordsArray) => {
+              this.setState({ coords: coordsArray });
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+          this.setState({ distanceToNextLocation: this.getDistance() });
+        } else {
+          Alert.alert(
+            'No Locations Available',
+            'Please move closer to the city, or extend your game difficulty',
+          );
+        }
+      })
+      .then(() => {
+        this.showModal();
+      });
+  }
+
+  startGame() {
+    this.getURad();
+    const date = new Date();
+    getLocation(this.state.umarker, this.state.uRad, this.state.visitedList)
+      .then((nextLoc) => {
+        if (nextLoc) {
+          nextLoc.startTime = date.getTime();
+          this.setState({ nextLocation: nextLoc });
+          const user = firebase.auth().currentUser;
+          const { key } = firebase
+            .database()
+            .ref(`user/${user.uid}`)
+            .child('game')
+            .push();
+          firebase
+            .database()
+            .ref(`user/${user.uid}`)
+            .update({
+              game: key,
+            });
+          firebase
+            .database()
+            .ref('/game/')
+            .child(key)
+            .update({
+              visited: 0,
+              Score: 0,
+              places: [this.state.nextLocation],
+              visitedList: [],
+            });
+          getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
+            .then((coordsArray) => {
+              this.setState({ coords: coordsArray });
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+          this.setState({ distanceToNextLocation: parseFloat(this.getDistance()).toFixed(0) });
+        } else {
+          Alert.alert(
+            'No Locations Available',
+            'Please move closer to the city, or extend your game difficulty',
+          );
+          this.setState({ coords: null });
+        }
+      })
+      .then(() => {
+        this.showModal();
+      });
+  }
+
+  addScore() {
+    const usersScore = this.state.score + parseInt(this.getScoreToAdd().toString(), 10);
+
     firebase
       .database()
       .ref(`game/${this.state.gameID}`)
-      .once('value', (snapshot) => {
-        place = snapshot.child(snapshot.val().visited + 1).val();
-        place.endTime = time;
-        visitedString = (snapshot.val().visited + 1).toString();
-      })
-      .then(firebase
-        .database()
-        .ref(`game/${this.state.gameID}`)
-        .update({
-          [visitedString]: place,
-        }));
+      .update({
+        Score: usersScore,
+      });
+
+    this.state.score = usersScore;
   }
-  checkIn() {
-    const date = new Date();
-    function deg2rad(deg) {
-      return deg * (Math.PI / 180);
-    }
-    const R = 6371e3;
-    const lat1 = this.state.umarker.coordinates.latitude;
-    const long1 = this.state.umarker.coordinates.longitude;
-
-    const lat2 = this.state.nextLocation.coordinates.latitude;
-    const long2 = this.state.nextLocation.coordinates.longitude;
-
-    const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(long2 - long1);
-
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c;
-
-    if (d < 30) {
-      const timediff = date.getTime() - this.state.nextLocation.startTime;
-      Alert.alert('WOOOOO', `You made it in ${timediff / 1000} seconds`);
-      this.updateEndTime(date.getTime());
-      this.updateVisitedList(this.state.nextLocation.placeID);
-      this.setState({ nextLocation: null });
-    } else {
-      Alert.alert('Nope', `You need to move ${Math.floor(d - 30)} meters closer`);
-    }
-    this.setState({});
-  }
-
-  showModal() {
-    this.setState({ modalState: true });
-  }
-
-  closeModal = () => {
-    this.setState({ modalState: false });
-  };
 
   render() {
     return (
@@ -332,14 +442,14 @@ export default class GameMap extends React.Component {
             />
           ))}
 
-          {this.state.nextLocation != null ? (
-            <MapView.Marker
-              image={imageMapView}
-              key={this.state.nextLocation.name}
-              coordinate={this.state.nextLocation.coordinates}
-              title={this.state.nextLocation.name}
-            />
-          ) : null}
+          {/* {this.state.nextLocation != null ? ( */}
+          {/* <MapView.Marker */}
+          {/* image={imageMapView} */}
+          {/* key={this.state.nextLocation.name} */}
+          {/* coordinate={this.state.nextLocation.coordinates} */}
+          {/* title={this.state.nextLocation.name} */}
+          {/* /> */}
+          {/* ) : null} */}
 
           {/* <MapView.Marker
             image={require('../assets/userLocation.png')}
@@ -347,8 +457,50 @@ export default class GameMap extends React.Component {
             coordinate={this.state.umarker.coordinates}
             title={this.state.umarker.title}
           /> */}
+          {this.state.coords != null && this.state.nextLocation != null ? (
+            <MapView.Polyline
+              coordinates={this.state.coords}
+              strokeWidth={3}
+              strokeColor="#3a599a"
+            />
+          ) : null}
+
+          {this.state.nextLocation != null ? (
+            <MapView.Circle
+              center={this.state.nextLocation.coordinates}
+              radius={CHECKINDIST}
+              fillColor="rgba(107,184,107, 0.35)"
+              strokeColor="rgba(0,0,0, 0.4)"
+            />
+          ) : null}
+
+          {this.state.umarker != null &&
+          this.state.nextLocation == null &&
+          this.state.uRad != null ? (
+            <MapView.Circle
+              center={this.state.umarker.coordinates}
+              radius={this.state.uRad}
+              fillColor="rgba(194,24,7, 0.25)"
+              strokeColor="rgba(0, 0, 0, 0.2)"
+            />
+          ) : null}
         </MapView>
-        <Button title="Modal Test" onPress={this.showModal} />
+        {this.state.gameID != null ? (
+          <View
+            style={{
+              // alignSelf: 'flex-end',
+              top: 40,
+              padding: 5,
+              marginRight: -5,
+              position: 'absolute',
+              backgroundColor: '#3a599a',
+              borderRadius: 5,
+            }}
+          >
+            <Text style={{ color: '#ffffff', fontSize: 16 }}>Score: {this.state.score}</Text>
+          </View>
+        ) : null}
+
         {this.state.gameID != null ? (
           <View
             style={{
@@ -358,11 +510,25 @@ export default class GameMap extends React.Component {
               padding: 5,
             }}
           >
-            {this.state.nextLocation != null ? (
-              <Button title="Check In" onPress={this.checkIn} color="#fff" />
-            ) : (
-              <Button title="Continue" onPress={this.continueLocation} color="#fff" />
-            )}
+            {this.state.nextLocation != null && this.getDistance() <= CHECKINDIST ? (
+              <React.Fragment>
+                <Button title="Check In" onPress={this.checkIn} color={getColor()} />
+              </React.Fragment>
+            ) : null}
+
+            {this.state.nextLocation != null && this.getDistance() > CHECKINDIST ? (
+              <React.Fragment>
+                <Button
+                  title={`Distance Remaining: \n${Math.round(this.getDistance() - CHECKINDIST)} m`}
+                  onPress={() => {}}
+                  color={getColor()}
+                />
+              </React.Fragment>
+            ) : null}
+
+            {this.state.nextLocation == null ? (
+              <Button title="Continue" onPress={this.continueLocation} color={getColor()} />
+            ) : null}
           </View>
         ) : (
           <View
@@ -373,14 +539,23 @@ export default class GameMap extends React.Component {
               padding: 5,
             }}
           >
-            <Button title="Start Game" onPress={this.startGame} color="#fff" />
+            <Button title="Start Game" onPress={this.startGame} color={getColor()} />
           </View>
         )}
-        {/* <ModalTest
+        {this.state.gameID != null ? (
+          <View style={{ position: 'absolute', right: '2%', bottom: 16 }}>
+            {this.state.nextLocation != null ? (
+              <Icon raised reverse name="directions-run" color="#3a599a" onPress={this.showModal} />
+            ) : null}
+          </View>
+        ) : (
+          <Text />
+        )}
+        <ModalTest
           closeModal={this.closeModal}
           showState={this.state.modalState}
           modalData={this.state.nextLocation}
-        /> */}
+        />
       </View>
     );
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Picker, StyleSheet, Text, View, Button } from 'react-native';
+import { Picker, StyleSheet, Text, View, Button, Platform } from 'react-native';
 import { Divider, Slider } from 'react-native-elements';
 import * as firebase from 'firebase';
 
@@ -45,7 +45,7 @@ export default class Settings extends React.Component {
     super(props);
     this.state = {
       minRadius: 500,
-      maxRadius: 2000,
+      maxRadius: 5000,
       uRad: 1000,
       difficulty: 'easy',
     };
@@ -156,7 +156,11 @@ export default class Settings extends React.Component {
             padding: 5,
           }}
         >
-          <Button title="Log Out" onPress={this.logOut} color="#fff" />
+          {Platform.OS === 'ios' ? (
+            <Button title="Log Out" onPress={this.logOut} color="#fff" />
+          ) : (
+            <Button title="Log Out" onPress={this.logOut} color="#3a599a" />
+          )}
         </View>
       </View>
     );
