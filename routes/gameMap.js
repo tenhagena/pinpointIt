@@ -511,7 +511,7 @@ export default class GameMap extends React.Component {
             {this.state.nextLocation != null && this.getDistance() > CHECKINDIST ? (
               <React.Fragment>
                 <Button
-                  title={`Distance Remaining: \n${Math.round(this.getDistance())} m`}
+                  title={`Distance Remaining: \n${Math.round(this.getDistance() - CHECKINDIST)} m`}
                   onPress={() => {}}
                   color={getColor()}
                 />
