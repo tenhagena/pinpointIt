@@ -320,87 +320,95 @@ export default class GameMap extends React.Component {
   continueLocation() {
     this.getURad();
     const date = new Date();
-    getLocation(this.state.umarker, this.state.uRad, this.state.visitedList).then((nextLoc) => {
-      if (nextLoc) {
-        nextLoc.startTime = date.getTime();
-        let places;
-        this.setState({ nextLocation: nextLoc });
-        // const user = this.state.uid;
-        firebase
-          .database()
-          .ref(`/game/${this.state.gameID}`)
-          .once('value', (snapshot) => {
-            ({ places } = snapshot.val());
-            places.push(nextLoc);
-            firebase
-              .database()
-              .ref(`/game/${this.state.gameID}`)
-              .update({
-                places,
-              });
-          });
-        getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
-          .then((coordsArray) => {
-            this.setState({ coords: coordsArray });
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-        this.setState({ distanceToNextLocation: this.getDistance() });
-      } else {
-        Alert.alert(
-          'No Locations Available',
-          'Please move closer to the city, or extend your game difficulty',
-        );
-      }
-    });
+    getLocation(this.state.umarker, this.state.uRad, this.state.visitedList)
+      .then((nextLoc) => {
+        if (nextLoc) {
+          nextLoc.startTime = date.getTime();
+          let places;
+          this.setState({ nextLocation: nextLoc });
+          // const user = this.state.uid;
+          firebase
+            .database()
+            .ref(`/game/${this.state.gameID}`)
+            .once('value', (snapshot) => {
+              ({ places } = snapshot.val());
+              places.push(nextLoc);
+              firebase
+                .database()
+                .ref(`/game/${this.state.gameID}`)
+                .update({
+                  places,
+                });
+            });
+          getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
+            .then((coordsArray) => {
+              this.setState({ coords: coordsArray });
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+          this.setState({ distanceToNextLocation: this.getDistance() });
+        } else {
+          Alert.alert(
+            'No Locations Available',
+            'Please move closer to the city, or extend your game difficulty',
+          );
+        }
+      })
+      .then(() => {
+        this.showModal();
+      });
   }
 
   startGame() {
     this.getURad();
     const date = new Date();
-    getLocation(this.state.umarker, this.state.uRad, this.state.visitedList).then((nextLoc) => {
-      if (nextLoc) {
-        nextLoc.startTime = date.getTime();
-        this.setState({ nextLocation: nextLoc });
-        const user = firebase.auth().currentUser;
-        const { key } = firebase
-          .database()
-          .ref(`user/${user.uid}`)
-          .child('game')
-          .push();
-        firebase
-          .database()
-          .ref(`user/${user.uid}`)
-          .update({
-            game: key,
-          });
-        firebase
-          .database()
-          .ref('/game/')
-          .child(key)
-          .update({
-            visited: 0,
-            Score: 0,
-            places: [this.state.nextLocation],
-            visitedList: [],
-          });
-        getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
-          .then((coordsArray) => {
-            this.setState({ coords: coordsArray });
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-        this.setState({ distanceToNextLocation: parseFloat(this.getDistance()).toFixed(0) });
-      } else {
-        Alert.alert(
-          'No Locations Available',
-          'Please move closer to the city, or extend your game difficulty',
-        );
-        this.setState({ coords: null });
-      }
-    });
+    getLocation(this.state.umarker, this.state.uRad, this.state.visitedList)
+      .then((nextLoc) => {
+        if (nextLoc) {
+          nextLoc.startTime = date.getTime();
+          this.setState({ nextLocation: nextLoc });
+          const user = firebase.auth().currentUser;
+          const { key } = firebase
+            .database()
+            .ref(`user/${user.uid}`)
+            .child('game')
+            .push();
+          firebase
+            .database()
+            .ref(`user/${user.uid}`)
+            .update({
+              game: key,
+            });
+          firebase
+            .database()
+            .ref('/game/')
+            .child(key)
+            .update({
+              visited: 0,
+              Score: 0,
+              places: [this.state.nextLocation],
+              visitedList: [],
+            });
+          getDirections(this.state.umarker.coordinates, this.state.nextLocation.coordinates)
+            .then((coordsArray) => {
+              this.setState({ coords: coordsArray });
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+          this.setState({ distanceToNextLocation: parseFloat(this.getDistance()).toFixed(0) });
+        } else {
+          Alert.alert(
+            'No Locations Available',
+            'Please move closer to the city, or extend your game difficulty',
+          );
+          this.setState({ coords: null });
+        }
+      })
+      .then(() => {
+        this.showModal();
+      });
   }
 
   addScore() {
