@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Platform, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Button, Platform, Image, ScrollView, Share } from 'react-native';
 import { Card, List } from 'react-native-elements';
 import * as firebase from 'firebase';
 
@@ -31,15 +31,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#3a599a',
     borderRadius: 5,
     padding: 5,
+    marginLeft: '2%',
+    marginRight: '2%',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
   },
   scroll: {
     marginBottom: 0,
     width: '100%',
   },
   score: {
-    fontSize: 16,
     margin: 30,
-    color: '#FFFFFF',
     padding: 5,
     backgroundColor: '#3a599a',
     borderRadius: 5,
@@ -139,8 +142,10 @@ export default class HomeScreen extends React.Component {
     );
   }
 
-  shareGame() {}
-
+  shareGame = () => {
+    const link = `https://pinpoint.surge.sh/?gameID=${this.state.gameID}`;
+    Share.share({ title: 'Game', message: link }, { dialogTitle: 'Share' });
+  };
   render() {
     return (
       <View style={styles.container}>
@@ -151,12 +156,18 @@ export default class HomeScreen extends React.Component {
         ) : (
           <Text style={styles.startGame}>Start a game to access progress</Text>
         )}
-        {this.state.gameID != null ? (
-          <View style={styles.endButton}>
-            <Button title="End Game" onPress={this.endGame} color={getColor()} />
-            <Button title="Share GAme" onPress={this.shareGame} color={getColor()} />
-          </View>
-        ) : null}
+        <View style={styles.buttonContainer}>
+          {this.state.gameID != null ? (
+            <View style={styles.endButton}>
+              <Button title="Share Game" onPress={this.shareGame} color={getColor()} />
+            </View>
+          ) : null}
+          {this.state.gameID != null ? (
+            <View style={styles.endButton}>
+              <Button title="End Game" onPress={this.endGame} color={getColor()} />
+            </View>
+          ) : null}
+        </View>
         <ScrollView style={styles.scroll}>
           {this.state.places != null ? this.createList() : null}
         </ScrollView>
