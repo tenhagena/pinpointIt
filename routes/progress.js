@@ -108,7 +108,7 @@ export default class HomeScreen extends React.Component {
     }
     console.log(this.state.placesList);
     return (
-      <List containerStyle={{ marginBottom: 20, marginTop: 30 }}>
+      <List containerStyle={{ marginBottom: 20 }}>
         {this.state.placesList.map((l, i) => <Card key={i} title={l.name} />)}
       </List>
     );
@@ -117,6 +117,7 @@ export default class HomeScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <Text style={{ marginTop: 30 }}>{this.state.currentScore}</Text>
         {this.state.visitedList != null && this.state.placesList != null ? this.createList() : null}
         {this.state.gameID != null ? (
           <View
