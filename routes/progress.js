@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   score: {
-    margin: 30,
+    marginTop: 40,
+    marginBottom: 10,
     padding: 5,
     backgroundColor: '#3a599a',
     borderRadius: 5,
