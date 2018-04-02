@@ -1,25 +1,26 @@
 import React from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, Dimensions } from 'react-native';
 import Modal from 'react-native-modal';
 import { Text, Button } from 'react-native-elements';
 // import { FontAwesome } from '@expo/vector-icons';
 
-const styles = StyleSheet.create({
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 32,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    height: '50%',
-  },
-  login: {
-    marginBottom: 'auto',
-  },
-});
-
 const ModalContent = (props) => {
+  const deviceHeight = Dimensions.get('window').height;
+  const deviceWidth = Dimensions.get('window').width;
+
+  const styles = StyleSheet.create({
+    modalContent: {
+      backgroundColor: 'white',
+      padding: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 32,
+      borderColor: 'rgba(0, 0, 0, 0.1)',
+      marginTop: deviceHeight / 4,
+      marginBottom: deviceHeight / 4,
+    },
+  });
+
   const ModalData = () => {
     if (
       typeof props.modalData.name !== 'undefined' &&
@@ -44,11 +45,11 @@ const ModalContent = (props) => {
   };
 
   return (
-    <Modal style={styles.modalContent} isVisible={props.showState}>
-      <View>
+    <View style={styles.container}>
+      <Modal style={styles.modalContent} isVisible={props.showState}>
         <View
           style={{
-            flexDirection: 'column',
+            flex: 1,
             alignItems: 'center',
           }}
         >
@@ -56,18 +57,17 @@ const ModalContent = (props) => {
           <ModalData />
           <Button
             onPress={props.closeModal}
-            style={styles.login}
             buttonStyle={{
               backgroundColor: '#3a599a',
-              width: 250,
-              height: 60,
-              marginTop: '30%',
+              width: deviceWidth / 1.8,
+              height: deviceHeight / 13,
+              marginTop: deviceHeight / 20,
             }}
             text="Lets Go!"
           />
         </View>
-      </View>
-    </Modal>
+      </Modal>
+    </View>
   );
 };
 export default ModalContent;
